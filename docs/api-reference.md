@@ -1,8 +1,8 @@
-# StackPilot — Core API Reference
+# Forgeboard — Core API Reference
 
-> Package: `@stackpilot/core` | Version: 0.2.0 | Last updated: 2026-03-30
+> Package: `@forgeboard/core` | Version: 0.2.0 | Last updated: 2026-03-30
 
-This document covers the public API of the `@stackpilot/core` package. The CLI and Desktop app both consume this package — understanding this API is useful if you want to embed StackPilot in a custom tool or write integration tests.
+This document covers the public API of the `@forgeboard/core` package. The CLI and Desktop app both consume this package — understanding this API is useful if you want to embed Forgeboard in a custom tool or write integration tests.
 
 ---
 
@@ -105,7 +105,7 @@ interface ValidationIssue {
 ## RulesEngine
 
 ```typescript
-import { RulesEngine } from "@stackpilot/core";
+import { RulesEngine } from "@forgeboard/core";
 
 const engine = new RulesEngine(technologies); // Technology[] from registry
 ```
@@ -158,7 +158,7 @@ Returns technologies filtered by category.
 ## StackEngine
 
 ```typescript
-import { StackEngine } from "@stackpilot/core";
+import { StackEngine } from "@forgeboard/core";
 
 const engine = new StackEngine(rulesEngine);
 ```
@@ -251,7 +251,7 @@ const restored = engine.rollback(stack.id, 1);
 ## RuntimeManager
 
 ```typescript
-import { RuntimeManager } from "@stackpilot/core";
+import { RuntimeManager } from "@forgeboard/core";
 
 const manager = new RuntimeManager(technologies); // Technology[] for healthcheck metadata
 ```
@@ -300,12 +300,12 @@ If `follow` is true, returns a `ChildProcess` that streams output — the caller
 ## Preferences
 
 ```typescript
-import { PreferencesManager } from "@stackpilot/core";
+import { PreferencesManager } from "@forgeboard/core";
 
 const prefs = new PreferencesManager();
 ```
 
-Preferences are stored in `~/.stackpilot/config.json`.
+Preferences are stored in `~/.forgeboard/config.json`.
 
 ### `get(): UserPreferences`
 
@@ -346,7 +346,7 @@ Callers should check return values rather than catching exceptions. The only exc
 ## Compatibility Engine (`engine/compatibility.ts`)
 
 ```typescript
-import { scoreCompatibility, scoreStack } from "@stackpilot/core";
+import { scoreCompatibility, scoreStack } from "@forgeboard/core";
 ```
 
 ### `CompatibilityResult`
@@ -384,7 +384,7 @@ const report = scoreStack(myStack, technologies);
 ## Environment Sync (`engine/env-sync.ts`)
 
 ```typescript
-import { syncEnv, checkDangerous } from "@stackpilot/core";
+import { syncEnv, checkDangerous } from "@forgeboard/core";
 ```
 
 ### `EnvSyncResult`
@@ -427,7 +427,7 @@ const warnings = checkDangerous("/home/user/projects/my-app");
 ## Stack Detection (`engine/detect.ts`)
 
 ```typescript
-import { detectStack } from "@stackpilot/core";
+import { detectStack } from "@forgeboard/core";
 ```
 
 ### `DetectedStack`
@@ -460,7 +460,7 @@ const detected = detectStack("/home/user/projects/my-app", technologies);
 ## Compose Preview (`engine/compose-preview.ts`)
 
 ```typescript
-import { generateComposePreview } from "@stackpilot/core";
+import { generateComposePreview } from "@forgeboard/core";
 ```
 
 ### `ComposePreviewResult`
@@ -487,7 +487,7 @@ console.log(preview.yaml);  // YAML string
 ## Health Check (`engine/health.ts`)
 
 ```typescript
-import { checkProjectHealth } from "@stackpilot/core";
+import { checkProjectHealth } from "@forgeboard/core";
 ```
 
 ### `HealthReport`
@@ -520,7 +520,7 @@ const report = checkProjectHealth("/home/user/projects/my-app");
 ## Migration Planner (`engine/migration.ts`)
 
 ```typescript
-import { planMigration } from "@stackpilot/core";
+import { planMigration } from "@forgeboard/core";
 ```
 
 ### `MigrationPlan`
@@ -556,7 +556,7 @@ const plan = planMigration("express", "fastify", technologies);
 ## Stack Diff (`engine/diff.ts`)
 
 ```typescript
-import { diffStacks } from "@stackpilot/core";
+import { diffStacks } from "@forgeboard/core";
 ```
 
 ### `StackDiff`
@@ -590,14 +590,14 @@ const diff = diffStacks(stackA, stackB);
 ## Stack Sharing (`engine/share.ts`)
 
 ```typescript
-import { serializeStack, deserializeStack } from "@stackpilot/core";
+import { serializeStack, deserializeStack } from "@forgeboard/core";
 ```
 
 ### `ShareableStack`
 
 ```typescript
 interface ShareableStack {
-  url: string;                      // Full stackpilot:// URL
+  url: string;                      // Full forgeboard:// URL
   encoded: string;                  // Base64-encoded payload
 }
 ```
@@ -608,7 +608,7 @@ Serializes a stack definition into a compact, URL-safe format.
 
 ```typescript
 const shareable = serializeStack(myStack);
-// { url: "stackpilot://import/eyJuYW1l...", encoded: "eyJuYW1l..." }
+// { url: "forgeboard://import/eyJuYW1l...", encoded: "eyJuYW1l..." }
 ```
 
 ### `deserializeStack(urlOrEncoded: string): StackDefinition`
@@ -616,7 +616,7 @@ const shareable = serializeStack(myStack);
 Reconstructs a stack definition from a serialized URL or base64 payload.
 
 ```typescript
-const stack = deserializeStack("stackpilot://import/eyJuYW1l...");
+const stack = deserializeStack("forgeboard://import/eyJuYW1l...");
 // Returns a full StackDefinition ready to save
 ```
 
@@ -625,7 +625,7 @@ const stack = deserializeStack("stackpilot://import/eyJuYW1l...");
 ## Infrastructure Generation (`engine/infra.ts`)
 
 ```typescript
-import { generateInfra } from "@stackpilot/core";
+import { generateInfra } from "@forgeboard/core";
 ```
 
 ### `InfraOutput`
@@ -661,7 +661,7 @@ const infra = generateInfra(myStack, "aws", technologies);
 ## Stack Linting (`engine/lint.ts`)
 
 ```typescript
-import { lintStack } from "@stackpilot/core";
+import { lintStack } from "@forgeboard/core";
 ```
 
 ### `StackStandards`
@@ -708,7 +708,7 @@ const result = lintStack(myStack, standards);
 ## Performance Profiling (`engine/benchmark.ts`)
 
 ```typescript
-import { profilePerformance } from "@stackpilot/core";
+import { profilePerformance } from "@forgeboard/core";
 ```
 
 ### `PerformanceProfile`
@@ -739,7 +739,7 @@ const profile = profilePerformance(myStack, technologies);
 ## Cost Estimation (`engine/cost.ts`)
 
 ```typescript
-import { estimateCost } from "@stackpilot/core";
+import { estimateCost } from "@forgeboard/core";
 ```
 
 ### `CostEstimate`
@@ -773,14 +773,14 @@ const estimate = estimateCost(myStack, technologies, { users: 10000, storageGb: 
 ## Plugin System (`engine/plugin.ts`)
 
 ```typescript
-import { listPlugins, installPlugin, removePlugin } from "@stackpilot/core";
+import { listPlugins, installPlugin, removePlugin } from "@forgeboard/core";
 ```
 
-### `StackPilotPlugin`
+### `ForgeboardPlugin`
 
 ```typescript
-interface StackPilotPlugin {
-  name: string;                     // Package name (e.g. "@stackpilot/plugin-aws")
+interface ForgeboardPlugin {
+  name: string;                     // Package name (e.g. "@forgeboard/plugin-aws")
   version: string;
   description: string;
   provides: {
@@ -792,21 +792,21 @@ interface StackPilotPlugin {
 }
 ```
 
-### `listPlugins(): StackPilotPlugin[]`
+### `listPlugins(): ForgeboardPlugin[]`
 
 Returns all installed plugins with their metadata.
 
 ```typescript
 const plugins = listPlugins();
-// [{ name: "@stackpilot/plugin-aws", version: "1.0.0", provides: { commands: ["deploy-aws"], ... }, installed: true }]
+// [{ name: "@forgeboard/plugin-aws", version: "1.0.0", provides: { commands: ["deploy-aws"], ... }, installed: true }]
 ```
 
-### `installPlugin(name: string): StackPilotPlugin`
+### `installPlugin(name: string): ForgeboardPlugin`
 
 Installs a plugin by name from the npm registry and registers its commands, templates, and technologies.
 
 ```typescript
-const plugin = installPlugin("@stackpilot/plugin-aws");
+const plugin = installPlugin("@forgeboard/plugin-aws");
 ```
 
 ### `removePlugin(name: string): boolean`
@@ -814,6 +814,6 @@ const plugin = installPlugin("@stackpilot/plugin-aws");
 Removes an installed plugin and unregisters its contributions. Returns true if the plugin was found and removed.
 
 ```typescript
-const removed = removePlugin("@stackpilot/plugin-aws");
+const removed = removePlugin("@forgeboard/plugin-aws");
 // true
 ```

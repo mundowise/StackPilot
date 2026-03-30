@@ -1,4 +1,4 @@
-# StackPilot User Guide
+# Forgeboard User Guide
 
 ## Table of Contents
 
@@ -46,8 +46,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/Xplus-technologies-open-in-process/StackPilot.git
-cd StackPilot
+git clone https://github.com/Xplus-technologies-open-in-process/Forgeboard.git
+cd Forgeboard
 
 # Install dependencies
 pnpm install
@@ -61,9 +61,9 @@ node packages/cli/dist/index.js --version
 # Option A: use directly
 node packages/cli/dist/index.js --help
 
-# Option B: link globally for the `stackpilot` command
+# Option B: link globally for the `forgeboard` command
 cd packages/cli && pnpm link --global
-stackpilot --help
+forgeboard --help
 ```
 
 For the desktop app on Linux, install system dependencies first:
@@ -75,7 +75,7 @@ sudo apt install -y libwebkit2gtk-4.1-dev librsvg2-dev patchelf libssl-dev libay
 cd packages/desktop
 pnpm tauri:build
 
-# The binary will be at src-tauri/target/release/stackpilot-desktop
+# The binary will be at src-tauri/target/release/forgeboard-desktop
 # .deb, .rpm, and .AppImage packages are generated in src-tauri/target/release/bundle/
 ```
 
@@ -86,8 +86,8 @@ pnpm tauri:build
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 # Clone and build
-git clone https://github.com/Xplus-technologies-open-in-process/StackPilot.git
-cd StackPilot
+git clone https://github.com/Xplus-technologies-open-in-process/Forgeboard.git
+cd Forgeboard
 pnpm install
 pnpm build
 
@@ -109,8 +109,8 @@ pnpm tauri:build
 # Install Rust from https://rustup.rs (required for the desktop app only)
 
 # Clone and build (PowerShell or Git Bash)
-git clone https://github.com/Xplus-technologies-open-in-process/StackPilot.git
-cd StackPilot
+git clone https://github.com/Xplus-technologies-open-in-process/Forgeboard.git
+cd Forgeboard
 pnpm install
 pnpm build
 
@@ -133,10 +133,10 @@ pnpm tauri:build
 
 ### CLI: Interactive mode
 
-Run `stackpilot init` to start the interactive wizard:
+Run `forgeboard init` to start the interactive wizard:
 
 ```bash
-stackpilot init
+forgeboard init
 ```
 
 The wizard walks you through the following steps:
@@ -149,7 +149,7 @@ The wizard walks you through the following steps:
 6. **Database** -- Optionally select a database (PostgreSQL, MySQL, MongoDB, Redis, SQLite, Supabase, MariaDB, PocketBase, Neon, Turso, Kafka).
 7. **Additional technologies** -- Add ORMs, auth providers, styling libraries, infrastructure services, and devops tools.
 8. **Profile** -- Choose a scaffold profile (minimal, standard, or production).
-9. **Review** -- StackPilot validates your selections, resolves dependencies, and flags incompatibilities. You can go back and adjust.
+9. **Review** -- Forgeboard validates your selections, resolves dependencies, and flags incompatibilities. You can go back and adjust.
 10. **Scaffold** -- The project is generated on disk with all files, dependencies, and configurations.
 
 ### CLI: One-shot generation
@@ -157,7 +157,7 @@ The wizard walks you through the following steps:
 If you already know what you want, skip the wizard entirely:
 
 ```bash
-stackpilot generate \
+forgeboard generate \
   --name "my-saas" \
   --path "/home/user/projects" \
   --techs "nextjs,fastapi,postgresql,redis,prisma,tailwindcss,nextauth,vitest,docker" \
@@ -169,7 +169,7 @@ This creates the project, installs all dependencies, initializes git, and genera
 
 ### What gets generated
 
-When you select both a frontend and backend framework, StackPilot creates a full-stack project with separate directories:
+When you select both a frontend and backend framework, Forgeboard creates a full-stack project with separate directories:
 
 ```
 my-saas/
@@ -237,7 +237,7 @@ View system information (Node.js version, pnpm version, Docker status) and confi
 
 ### Built-in templates (20)
 
-Templates are pre-composed stacks of technologies that work well together. StackPilot ships with 20 built-in templates:
+Templates are pre-composed stacks of technologies that work well together. Forgeboard ships with 20 built-in templates:
 
 | Template | Technologies |
 |----------|-------------|
@@ -266,13 +266,13 @@ Templates are pre-composed stacks of technologies that work well together. Stack
 
 ```bash
 # List all available templates
-stackpilot template list
+forgeboard template list
 
 # Or browse interactively
-stackpilot browse --templates
+forgeboard browse --templates
 
 # Create a project from a template
-stackpilot create t3-stack --path /home/user/projects
+forgeboard create t3-stack --path /home/user/projects
 ```
 
 This loads the template definition, resolves all technologies, saves the stack, and scaffolds the project.
@@ -283,13 +283,13 @@ Save any stack as a reusable custom template:
 
 ```bash
 # Save a stack as a custom template
-stackpilot template save my-stack-id
+forgeboard template save my-stack-id
 
 # List your saved custom templates
-stackpilot template saved
+forgeboard template saved
 
 # Create a project from a custom template
-stackpilot template use-custom my-custom-template
+forgeboard template use-custom my-custom-template
 ```
 
 Custom templates are stored locally and persist across sessions.
@@ -301,7 +301,7 @@ Custom templates are stored locally and persist across sessions.
 Explore all 83 technologies in the registry interactively:
 
 ```bash
-stackpilot browse
+forgeboard browse
 ```
 
 This opens a navigable catalog grouped by category (runtime, frontend, backend, database, orm, auth, styling, service, devops). Select any technology to see its details: supported versions, default port, dependencies, suggested companions, and Docker image.
@@ -309,26 +309,26 @@ This opens a navigable catalog grouped by category (runtime, frontend, backend, 
 To view details about a specific technology or saved stack:
 
 ```bash
-stackpilot info nextjs
-stackpilot info my-stack
+forgeboard info nextjs
+forgeboard info my-stack
 ```
 
 To list all saved stacks:
 
 ```bash
-stackpilot list
+forgeboard list
 ```
 
 ---
 
 ## Docker Runtime Management
 
-StackPilot generates `docker-compose.yml` files for stacks that include databases and services. Only databases and infrastructure services get Docker containers -- runtimes (Node.js, Python, Go, etc.) run natively on the host.
+Forgeboard generates `docker-compose.yml` files for stacks that include databases and services. Only databases and infrastructure services get Docker containers -- runtimes (Node.js, Python, Go, etc.) run natively on the host.
 
 ### Start services
 
 ```bash
-stackpilot up
+forgeboard up
 ```
 
 Starts all Docker services defined in the stack's compose file. Runs in detached mode by default.
@@ -337,16 +337,16 @@ Starts all Docker services defined in the stack's compose file. Runs in detached
 
 ```bash
 # Stop and remove containers
-stackpilot down
+forgeboard down
 
 # Stop and remove containers AND volumes (deletes data)
-stackpilot down --volumes
+forgeboard down --volumes
 ```
 
 ### Check status
 
 ```bash
-stackpilot status
+forgeboard status
 ```
 
 Shows the running state of each service (container name, image, status, ports).
@@ -355,25 +355,25 @@ Shows the running state of each service (container name, image, status, ports).
 
 ```bash
 # All services
-stackpilot logs
+forgeboard logs
 
 # Specific service
-stackpilot logs postgresql
+forgeboard logs postgresql
 
 # Follow log output
-stackpilot logs -f
+forgeboard logs -f
 ```
 
 ---
 
 ## Version Management
 
-StackPilot tracks changes to your stack definitions over time.
+Forgeboard tracks changes to your stack definitions over time.
 
 ### Save a version snapshot
 
 ```bash
-stackpilot save my-stack
+forgeboard save my-stack
 ```
 
 Creates a versioned snapshot of the current stack state. Each save increments the version number.
@@ -381,7 +381,7 @@ Creates a versioned snapshot of the current stack state. Each save increments th
 ### View version history
 
 ```bash
-stackpilot version list my-stack
+forgeboard version list my-stack
 ```
 
 Shows all saved versions with timestamps and summaries of what changed.
@@ -389,7 +389,7 @@ Shows all saved versions with timestamps and summaries of what changed.
 ### Compare versions
 
 ```bash
-stackpilot version diff my-stack 1 3
+forgeboard version diff my-stack 1 3
 ```
 
 Shows the differences between version 1 and version 3 -- technologies added, removed, or changed.
@@ -397,7 +397,7 @@ Shows the differences between version 1 and version 3 -- technologies added, rem
 ### Rollback to a previous version
 
 ```bash
-stackpilot version rollback my-stack --to 2
+forgeboard version rollback my-stack --to 2
 ```
 
 Restores the stack to the state it was in at version 2.
@@ -411,7 +411,7 @@ Restores the stack to the state it was in at version 2.
 Export a saved stack to a portable file for sharing with teammates or storing in version control:
 
 ```bash
-stackpilot export my-stack --output my-stack.yaml
+forgeboard export my-stack --output my-stack.yaml
 ```
 
 The exported file contains the full stack definition: technologies, versions, configuration, and metadata. Both YAML and JSON formats are supported.
@@ -421,7 +421,7 @@ The exported file contains the full stack definition: technologies, versions, co
 Import a stack from a file:
 
 ```bash
-stackpilot import my-stack.yaml
+forgeboard import my-stack.yaml
 ```
 
 The stack is validated against the current registry and saved to your local database. If any technology in the file is not present in your registry, the import reports the issue.
@@ -431,7 +431,7 @@ The stack is validated against the current registry and saved to your local data
 Duplicate an existing stack:
 
 ```bash
-stackpilot clone my-stack
+forgeboard clone my-stack
 ```
 
 Creates a copy of the stack with a new ID, useful for experimenting with variations without modifying the original.
@@ -440,7 +440,7 @@ Creates a copy of the stack with a new ID, useful for experimenting with variati
 
 ## AI Commands
 
-StackPilot includes optional commands that use the Anthropic API for suggestions and documentation generation. These commands do not affect the deterministic rules engine -- they are a convenience layer.
+Forgeboard includes optional commands that use the Anthropic API for suggestions and documentation generation. These commands do not affect the deterministic rules engine -- they are a convenience layer.
 
 ### Setup
 
@@ -457,7 +457,7 @@ Add it to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.) to persist across s
 Describe your project in natural language and get a recommended stack:
 
 ```bash
-stackpilot ai suggest "SaaS app with user authentication, payments, and a dashboard"
+forgeboard ai suggest "SaaS app with user authentication, payments, and a dashboard"
 ```
 
 Returns a list of recommended technologies with reasoning.
@@ -467,7 +467,7 @@ Returns a list of recommended technologies with reasoning.
 Generate project documentation from a stack definition:
 
 ```bash
-stackpilot ai readme my-stack
+forgeboard ai readme my-stack
 ```
 
 Produces a README with a technology table, getting started instructions, and architecture overview.
@@ -477,7 +477,7 @@ Produces a README with a technology table, getting started instructions, and arc
 Get an architectural overview of a stack:
 
 ```bash
-stackpilot ai explain my-stack
+forgeboard ai explain my-stack
 ```
 
 Describes how the selected technologies fit together, common patterns, and potential considerations.
@@ -489,7 +489,7 @@ Describes how the selected technologies fit together, common patterns, and poten
 The `doctor` command checks that your system has the required tools installed and properly configured:
 
 ```bash
-stackpilot doctor
+forgeboard doctor
 ```
 
 It verifies:
@@ -506,7 +506,7 @@ Each check reports a pass/fail status with actionable guidance when something is
 ### Suggested fixes
 
 ```bash
-stackpilot doctor --suggest
+forgeboard doctor --suggest
 ```
 
 When a check fails, this flag provides specific installation commands for your platform.
@@ -518,13 +518,13 @@ When a check fails, this flag provides specific installation commands for your p
 View your current configuration:
 
 ```bash
-stackpilot config list
+forgeboard config list
 ```
 
 Modify preferences:
 
 ```bash
-stackpilot config set <key> <value>
+forgeboard config set <key> <value>
 ```
 
 Available configuration options:
@@ -538,7 +538,7 @@ Available configuration options:
 | `defaultProfile` | Default stack profile (rapid, standard, production, enterprise, lightweight) | `standard` |
 | `theme` | Desktop app theme | `dark` |
 
-Preferences are stored locally in your home directory (`~/.stackpilot/`) and persist across sessions.
+Preferences are stored locally in your home directory (`~/.forgeboard/`) and persist across sessions.
 
 ---
 
@@ -548,13 +548,13 @@ Generate completion scripts for your shell:
 
 ```bash
 # Bash
-stackpilot completion bash >> ~/.bashrc
+forgeboard completion bash >> ~/.bashrc
 
 # Zsh
-stackpilot completion zsh >> ~/.zshrc
+forgeboard completion zsh >> ~/.zshrc
 
 # Fish
-stackpilot completion fish > ~/.config/fish/completions/stackpilot.fish
+forgeboard completion fish > ~/.config/fish/completions/forgeboard.fish
 ```
 
 After adding the completion script, restart your shell or source the configuration file. Tab completion works for all commands, subcommands, and saved stack names.
@@ -567,7 +567,7 @@ Check how well two technologies work together, or score an entire stack:
 
 ```bash
 # Score compatibility between two technologies (0-100)
-stackpilot score nextjs postgresql
+forgeboard score nextjs postgresql
 
 # Example output:
 #   nextjs <-> postgresql
@@ -579,7 +579,7 @@ stackpilot score nextjs postgresql
 #     - No native ORM, needs adapter layer
 
 # Score a full saved stack
-stackpilot score my-stack
+forgeboard score my-stack
 ```
 
 **Options:**
@@ -597,10 +597,10 @@ Detect the technology stack of an existing project by inspecting its files:
 
 ```bash
 # Detect stack in current directory
-stackpilot analyze
+forgeboard analyze
 
 # Detect stack in a specific path
-stackpilot analyze /home/user/projects/my-app
+forgeboard analyze /home/user/projects/my-app
 
 # Example output:
 #   Detected Stack:
@@ -629,7 +629,7 @@ stackpilot analyze /home/user/projects/my-app
 Generate a performance profile for a saved stack:
 
 ```bash
-stackpilot benchmark my-stack
+forgeboard benchmark my-stack
 
 # Example output:
 #   Performance Profile: my-stack
@@ -662,7 +662,7 @@ stackpilot benchmark my-stack
 Estimate monthly hosting costs for a stack:
 
 ```bash
-stackpilot cost my-stack
+forgeboard cost my-stack
 
 # Example output:
 #   Monthly Cost Estimate: my-stack
@@ -692,7 +692,7 @@ Manage environment variables across `.env.example` and `.env` files:
 
 ```bash
 # Sync .env.example to .env (adds missing keys, preserves existing values)
-stackpilot env sync
+forgeboard env sync
 
 # Example output:
 #   Syncing .env.example -> .env
@@ -702,7 +702,7 @@ stackpilot env sync
 #   Done: 2 added, 1 unchanged
 
 # Check for dangerous values in .env files
-stackpilot env check
+forgeboard env check
 
 # Example output:
 #   Environment Check:
@@ -726,10 +726,10 @@ stackpilot env check
 Run a comprehensive health audit on a project:
 
 ```bash
-stackpilot health
+forgeboard health
 
 # Or specify a path
-stackpilot health /home/user/projects/my-app
+forgeboard health /home/user/projects/my-app
 
 # Example output:
 #   Project Health: my-app
@@ -759,7 +759,7 @@ stackpilot health /home/user/projects/my-app
 Preview the generated docker-compose.yml without writing any files:
 
 ```bash
-stackpilot preview my-stack
+forgeboard preview my-stack
 
 # Example output (prints YAML to stdout):
 #   version: "3.8"
@@ -796,13 +796,13 @@ Generate deployment configurations for a target platform:
 
 ```bash
 # Generate for a VPS (Dockerfile + nginx config + systemd unit)
-stackpilot deploy my-stack --target vps
+forgeboard deploy my-stack --target vps
 
 # Generate for AWS (CloudFormation template)
-stackpilot deploy my-stack --target aws
+forgeboard deploy my-stack --target aws
 
 # Generate for GCP (Terraform files)
-stackpilot deploy my-stack --target gcp
+forgeboard deploy my-stack --target gcp
 
 # Example output:
 #   Generated Infrastructure as Code:
@@ -829,7 +829,7 @@ stackpilot deploy my-stack --target gcp
 Generate a step-by-step migration plan between two technologies:
 
 ```bash
-stackpilot migrate --from express --to fastify
+forgeboard migrate --from express --to fastify
 
 # Example output:
 #   Migration Plan: Express -> Fastify
@@ -868,7 +868,7 @@ stackpilot migrate --from express --to fastify
 Get curated learning resources for any technology in the catalog:
 
 ```bash
-stackpilot learn fastapi
+forgeboard learn fastapi
 
 # Example output:
 #   Learning Resources: FastAPI
@@ -903,17 +903,17 @@ Share a stack definition via an encoded URL without any cloud service:
 
 ```bash
 # Generate a shareable URL
-stackpilot share my-stack
+forgeboard share my-stack
 
 # Example output:
 #   Shareable URL:
-#   stackpilot://import/eyJuYW1lIjoibXktc2FhcyIsInRlY2hub2xvZ2llcyI6...
+#   forgeboard://import/eyJuYW1lIjoibXktc2FhcyIsInRlY2hub2xvZ2llcyI6...
 #
 #   Or copy this command:
-#   stackpilot import-url "stackpilot://import/eyJuYW1lIjoi..."
+#   forgeboard import-url "forgeboard://import/eyJuYW1lIjoi..."
 
 # Import a stack from a shared URL
-stackpilot import-url "stackpilot://import/eyJuYW1lIjoibXktc2FhcyI..."
+forgeboard import-url "forgeboard://import/eyJuYW1lIjoibXktc2FhcyI..."
 
 # Example output:
 #   Imported stack: my-saas
@@ -935,7 +935,7 @@ stackpilot import-url "stackpilot://import/eyJuYW1lIjoibXktc2FhcyI..."
 Compare two saved stacks side by side:
 
 ```bash
-stackpilot compare stack-a stack-b
+forgeboard compare stack-a stack-b
 
 # Example output:
 #   Comparing: stack-a vs stack-b
@@ -965,12 +965,12 @@ stackpilot compare stack-a stack-b
 
 ## Team Standards (Lint)
 
-Validate a stack against team-defined standards in a `.stackpilotrc` file:
+Validate a stack against team-defined standards in a `.forgeboardrc` file:
 
 ```bash
-stackpilot lint
+forgeboard lint
 
-# Example .stackpilotrc (JSON):
+# Example .forgeboardrc (JSON):
 # {
 #   "required": ["typescript", "docker", "biome"],
 #   "banned": ["webpack", "eslint"],
@@ -981,7 +981,7 @@ stackpilot lint
 # }
 
 # Example output:
-#   Linting stack against .stackpilotrc
+#   Linting stack against .forgeboardrc
 #   [PASS] typescript is present
 #   [PASS] docker is present
 #   [FAIL] biome is missing (required by team standards)
@@ -996,35 +996,35 @@ stackpilot lint
 
 | Flag | Description |
 |------|-------------|
-| `--config <path>` | Path to standards file (default: `.stackpilotrc`) |
+| `--config <path>` | Path to standards file (default: `.forgeboardrc`) |
 | `--json` | Output as JSON |
 
 ---
 
 ## Plugin Management
 
-Extend StackPilot with community plugins that add commands, templates, or technology definitions:
+Extend Forgeboard with community plugins that add commands, templates, or technology definitions:
 
 ```bash
 # List installed plugins
-stackpilot plugin list
+forgeboard plugin list
 
 # Install a plugin
-stackpilot plugin install @stackpilot/plugin-aws
+forgeboard plugin install @forgeboard/plugin-aws
 
 # Remove a plugin
-stackpilot plugin remove @stackpilot/plugin-aws
+forgeboard plugin remove @forgeboard/plugin-aws
 
 # Show plugin details
-stackpilot plugin info @stackpilot/plugin-aws
+forgeboard plugin info @forgeboard/plugin-aws
 
 # Example output (list):
 #   Installed Plugins:
 #   ┌──────────────────────────┬─────────┬──────────────────────────┐
 #   │ Name                     │ Version │ Provides                 │
 #   ├──────────────────────────┼─────────┼──────────────────────────┤
-#   │ @stackpilot/plugin-aws   │ 1.0.0   │ 3 commands, 2 templates  │
-#   │ @stackpilot/plugin-k8s   │ 0.5.0   │ 1 command, 5 tech defs   │
+#   │ @forgeboard/plugin-aws   │ 1.0.0   │ 3 commands, 2 templates  │
+#   │ @forgeboard/plugin-k8s   │ 0.5.0   │ 1 command, 5 tech defs   │
 #   └──────────────────────────┴─────────┴──────────────────────────┘
 ```
 
@@ -1038,7 +1038,7 @@ stackpilot plugin info @stackpilot/plugin-aws
 
 ## Troubleshooting
 
-### `command not found: stackpilot`
+### `command not found: forgeboard`
 
 The CLI is not linked globally. Either:
 - Run `cd packages/cli && pnpm link --global` to create the global link.
@@ -1046,21 +1046,21 @@ The CLI is not linked globally. Either:
 
 ### `pnpm install` fails with version error
 
-StackPilot requires pnpm 10 or later. Check your version with `pnpm --version` and update with `npm install -g pnpm@latest`.
+Forgeboard requires pnpm 10 or later. Check your version with `pnpm --version` and update with `npm install -g pnpm@latest`.
 
-### `stackpilot up` fails with "docker compose not found"
+### `forgeboard up` fails with "docker compose not found"
 
-Ensure Docker Desktop (macOS/Windows) or Docker Engine + docker-compose-plugin (Linux) is installed. StackPilot uses `docker compose` (v2 syntax), not the legacy `docker-compose` binary.
+Ensure Docker Desktop (macOS/Windows) or Docker Engine + docker-compose-plugin (Linux) is installed. Forgeboard uses `docker compose` (v2 syntax), not the legacy `docker-compose` binary.
 
 If you use the legacy binary, configure it:
 
 ```bash
-stackpilot config set dockerComposeCommand "docker-compose"
+forgeboard config set dockerComposeCommand "docker-compose"
 ```
 
 ### Scaffold fails with "create-next-app not found"
 
-StackPilot delegates to official CLI tools during scaffolding. Ensure the required tools are available globally. For Node.js frameworks, `npx` is used automatically. For Python frameworks, ensure `pip` or `pipx` is available.
+Forgeboard delegates to official CLI tools during scaffolding. Ensure the required tools are available globally. For Node.js frameworks, `npx` is used automatically. For Python frameworks, ensure `pip` or `pipx` is available.
 
 ### Desktop app fails to build on Linux
 
@@ -1078,11 +1078,11 @@ sudo dnf install webkit2gtk4.1-devel librsvg2-devel patchelf openssl-devel libap
 
 ### TypeScript errors during build
 
-Run `pnpm clean && pnpm install && pnpm build` to rebuild from a clean state. StackPilot uses TypeScript strict mode and ESM -- ensure your Node.js version is 22 or later.
+Run `pnpm clean && pnpm install && pnpm build` to rebuild from a clean state. Forgeboard uses TypeScript strict mode and ESM -- ensure your Node.js version is 22 or later.
 
 ### SQLite errors
 
-The local database is stored in `~/.stackpilot/stackpilot.db`. If it becomes corrupted, delete it and StackPilot will recreate it on next run. Note that this removes all saved stacks.
+The local database is stored in `~/.forgeboard/forgeboard.db`. If it becomes corrupted, delete it and Forgeboard will recreate it on next run. Note that this removes all saved stacks.
 
 ### AI commands return errors
 

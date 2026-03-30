@@ -1,11 +1,11 @@
 /**
- * stackpilot deploy <stackId> --target <vps|aws|gcp> — Generate infrastructure files.
+ * forgeboard deploy <stackId> --target <vps|aws|gcp> — Generate infrastructure files.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { DeployTarget } from "@stackpilot/core";
-import { generateInfra } from "@stackpilot/core";
+import type { DeployTarget } from "@forgeboard/core";
+import { generateInfra } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine, getStackEngine } from "../ui/context.js";
@@ -33,7 +33,7 @@ export const deployCommand = new Command("deploy")
 
     if (!stack) {
       console.error(chalk.red(`\u2716 Stack "${stackId}" not found.`));
-      console.error(chalk.dim("  Run: stackpilot list"));
+      console.error(chalk.dim("  Run: forgeboard list"));
       process.exit(1);
     }
 
@@ -56,7 +56,7 @@ export const deployCommand = new Command("deploy")
       return;
     }
 
-    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ Deploy")}\n`);
+    console.log(`\n  ${gradientHeader("Forgeboard")} ${chalk.dim("/ Deploy")}\n`);
 
     // Build content
     const lines: string[] = [];

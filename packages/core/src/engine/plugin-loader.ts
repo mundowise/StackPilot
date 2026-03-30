@@ -1,8 +1,8 @@
 /**
- * Plugin Loader — Discovers, installs, and loads StackPilot plugins.
+ * Plugin Loader — Discovers, installs, and loads Forgeboard plugins.
  *
- * Plugins live in ~/.stackpilot/plugins/<name>/ and expose a
- * stackpilot.plugin.json manifest describing their capabilities.
+ * Plugins live in ~/.forgeboard/plugins/<name>/ and expose a
+ * forgeboard.plugin.json manifest describing their capabilities.
  */
 
 import * as fs from "node:fs";
@@ -19,7 +19,7 @@ export interface PluginCommand {
   handler: string;
 }
 
-export interface StackPilotPlugin {
+export interface ForgeboardPlugin {
   name: string;
   version: string;
   description: string;
@@ -39,7 +39,7 @@ export interface PluginManifest {
 // ─── Plugin Directory ─────────────────────────────────
 
 export function getPluginDir(): string {
-  return path.join(os.homedir(), ".stackpilot", "plugins");
+  return path.join(os.homedir(), ".forgeboard", "plugins");
 }
 
 function ensurePluginDir(): void {
@@ -61,7 +61,7 @@ export function listPlugins(): PluginManifest[] {
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
 
-    const manifestPath = path.join(dir, entry.name, "stackpilot.plugin.json");
+    const manifestPath = path.join(dir, entry.name, "forgeboard.plugin.json");
     if (!fs.existsSync(manifestPath)) continue;
 
     try {
@@ -91,9 +91,9 @@ export function installPlugin(nameOrPath: string): PluginManifest {
     throw new Error(`Plugin source must be a directory: ${sourcePath}`);
   }
 
-  const manifestPath = path.join(sourcePath, "stackpilot.plugin.json");
+  const manifestPath = path.join(sourcePath, "forgeboard.plugin.json");
   if (!fs.existsSync(manifestPath)) {
-    throw new Error(`No stackpilot.plugin.json found in: ${sourcePath}`);
+    throw new Error(`No forgeboard.plugin.json found in: ${sourcePath}`);
   }
 
   let manifest: PluginManifest;
@@ -101,7 +101,7 @@ export function installPlugin(nameOrPath: string): PluginManifest {
     const raw = fs.readFileSync(manifestPath, "utf-8");
     manifest = JSON.parse(raw) as PluginManifest;
   } catch {
-    throw new Error(`Invalid stackpilot.plugin.json in: ${sourcePath}`);
+    throw new Error(`Invalid forgeboard.plugin.json in: ${sourcePath}`);
   }
 
   if (!manifest.name || !manifest.version || !manifest.main) {
@@ -153,9 +153,9 @@ export function removePlugin(name: string): void {
 
 // ─── Load Plugin ──────────────────────────────────────
 
-export function loadPlugin(name: string): StackPilotPlugin | null {
+export function loadPlugin(name: string): ForgeboardPlugin | null {
   const pluginDir = path.join(getPluginDir(), name);
-  const manifestPath = path.join(pluginDir, "stackpilot.plugin.json");
+  const manifestPath = path.join(pluginDir, "forgeboard.plugin.json");
 
   if (!fs.existsSync(manifestPath)) return null;
 
@@ -169,7 +169,7 @@ export function loadPlugin(name: string): StackPilotPlugin | null {
     // Read the main file and parse it as JSON data (for static plugins)
     // or return manifest-only info
     const mainRaw = fs.readFileSync(mainPath, "utf-8");
-    const pluginData = JSON.parse(mainRaw) as StackPilotPlugin;
+    const pluginData = JSON.parse(mainRaw) as ForgeboardPlugin;
 
     return {
       name: manifest.name,
@@ -187,7 +187,7 @@ export function loadPlugin(name: string): StackPilotPlugin | null {
 // ─── Get Plugin Info ──────────────────────────────────
 
 export function getPluginInfo(name: string): PluginManifest | null {
-  const manifestPath = path.join(getPluginDir(), name, "stackpilot.plugin.json");
+  const manifestPath = path.join(getPluginDir(), name, "forgeboard.plugin.json");
 
   if (!fs.existsSync(manifestPath)) return null;
 

@@ -1,10 +1,10 @@
 {
-  "name": "@stackpilot/cli",
+  "name": "@forgeboard/cli",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "bin": {
-    "stackpilot": "./dist/index.js"
+    "forgeboard": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc -b",
@@ -17,9 +17,9 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@inquirer/prompts": "^7.0.0",
-    "@stackpilot/core": "workspace:*",
-    "@stackpilot/registry": "workspace:*",
-    "@stackpilot/templates": "workspace:*",
+    "@forgeboard/core": "workspace:*",
+    "@forgeboard/registry": "workspace:*",
+    "@forgeboard/templates": "workspace:*",
     "chalk": "^5.4.0",
     "commander": "^13.0.0",
     "ora": "^8.0.0",

@@ -1,5 +1,5 @@
 /**
- * stackpilot ai — AI-powered utilities.
+ * forgeboard ai — AI-powered utilities.
  * These are utility features, NOT the source of truth for compatibility.
  * Uses the Anthropic API for natural language processing.
  */
@@ -61,7 +61,7 @@ export const aiCommand = new Command("ai")
         try {
           const result = await ask(
             client,
-            `You are StackPilot AI. You suggest technology stacks from a catalog.
+            `You are Forgeboard AI. You suggest technology stacks from a catalog.
 Available technologies (use ONLY these IDs):
 ${techList}
 
@@ -81,7 +81,7 @@ Be concise. Only suggest technologies from the list above.`,
           console.log("");
           console.log(
             chalk.dim(
-              "  To create this stack: stackpilot generate --name <name> --path . --techs <ids>",
+              "  To create this stack: forgeboard generate --name <name> --path . --techs <ids>",
             ),
           );
           console.log("");
@@ -111,7 +111,7 @@ Be concise. Only suggest technologies from the list above.`,
 
         if (!stack) {
           console.error(error(`Stack "${stackId}" not found.`));
-          console.error(chalk.dim("  Run `stackpilot list` to see saved stacks."));
+          console.error(chalk.dim("  Run `forgeboard list` to see saved stacks."));
           process.exit(1);
         }
 
@@ -158,7 +158,7 @@ Include: project description, tech stack table, getting started (with docker com
 
         if (!stack) {
           console.error(error(`Stack "${stackId}" not found.`));
-          console.error(chalk.dim("  Run `stackpilot list` to see saved stacks."));
+          console.error(chalk.dim("  Run `forgeboard list` to see saved stacks."));
           process.exit(1);
         }
 

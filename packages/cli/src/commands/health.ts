@@ -1,10 +1,10 @@
 /**
- * stackpilot health [path] — Check project health across multiple dimensions.
+ * forgeboard health [path] — Check project health across multiple dimensions.
  */
 
 import * as path from "node:path";
-import type { HealthCheck, HealthReport } from "@stackpilot/core";
-import { checkProjectHealth } from "@stackpilot/core";
+import type { HealthCheck, HealthReport } from "@forgeboard/core";
+import { checkProjectHealth } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { box, formatJson, gradientHeader } from "../ui/format.js";
@@ -77,7 +77,7 @@ export const healthCommand = new Command("health")
     );
     lines.push("");
 
-    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ Health Report")}\n`);
+    console.log(`\n  ${gradientHeader("Forgeboard")} ${chalk.dim("/ Health Report")}\n`);
     console.log(box(lines.join("\n"), `Health Report: ${resolvedPath}`));
     console.log("");
   });

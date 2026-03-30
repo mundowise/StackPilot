@@ -371,5 +371,5 @@ pub fn run() {
             exec_command,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running StackPilot");
+        .expect("error while running Forgeboard");
 }

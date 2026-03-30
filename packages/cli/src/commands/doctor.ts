@@ -1,5 +1,5 @@
 /**
- * stackpilot doctor — Detect system capabilities and issues.
+ * forgeboard doctor — Detect system capabilities and issues.
  */
 
 import { execSync } from "node:child_process";
@@ -130,7 +130,7 @@ export const doctorCommand = new Command("doctor")
     }
 
     // ── Output ──
-    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ System Doctor")}\n`);
+    console.log(`\n  ${gradientHeader("Forgeboard")} ${chalk.dim("/ System Doctor")}\n`);
 
     // System info box
     const sysContent = [

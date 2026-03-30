@@ -1,12 +1,12 @@
 [package]
-name = "stackpilot-desktop"
+name = "forgeboard-desktop"
 version = "0.1.0"
-description = "StackPilot Desktop App"
+description = "Forgeboard Desktop App"
 authors = ["Orlando Fernandez"]
 edition = "2021"
 
 [lib]
-name = "stackpilot_desktop_lib"
+name = "forgeboard_desktop_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]

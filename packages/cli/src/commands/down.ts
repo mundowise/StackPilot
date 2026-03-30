@@ -1,5 +1,5 @@
 /**
- * stackpilot down — Stop Docker services.
+ * forgeboard down — Stop Docker services.
  */
 
 import * as path from "node:path";

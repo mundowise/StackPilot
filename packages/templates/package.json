@@ -1,5 +1,5 @@
 {
-  "name": "@stackpilot/templates",
+  "name": "@forgeboard/templates",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,8 +14,8 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@stackpilot/core": "workspace:*",
-    "@stackpilot/registry": "workspace:*"
+    "@forgeboard/core": "workspace:*",
+    "@forgeboard/registry": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",

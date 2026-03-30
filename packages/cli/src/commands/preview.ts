@@ -1,9 +1,9 @@
 /**
- * stackpilot preview <stackId> — Show the docker-compose.yml that would be generated.
+ * forgeboard preview <stackId> — Show the docker-compose.yml that would be generated.
  * Does not create any files on disk.
  */
 
-import { generateComposePreview } from "@stackpilot/core";
+import { generateComposePreview } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine, getStackEngine } from "../ui/context.js";
@@ -79,7 +79,7 @@ export const previewCommand = new Command("preview")
     console.log("");
     console.log(info("This is a preview. No files were created."));
     console.log(
-      chalk.dim(`  Use ${chalk.white(`stackpilot scaffold ${id}`)} to generate project files.`),
+      chalk.dim(`  Use ${chalk.white(`forgeboard scaffold ${id}`)} to generate project files.`),
     );
     console.log("");
   });

@@ -1,4 +1,4 @@
-import { loadAllTechnologies } from "@stackpilot/registry";
+import { loadAllTechnologies } from "@forgeboard/registry";
 import { describe, expect, it } from "vitest";
 import {
   findTemplatesByTechnologies,

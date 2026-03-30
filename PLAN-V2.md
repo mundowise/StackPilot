@@ -1,27 +1,27 @@
-# StackPilot v0.2 — Feature Implementation Plan
+# Forgeboard v0.2 — Feature Implementation Plan
 
 ## 15 Features — 5 Phases
 
 ---
 
 ## Phase 1: Core Intelligence (Week 1-2)
-> Make StackPilot smarter about what it already knows.
+> Make Forgeboard smarter about what it already knows.
 
 ### F01 — Compatibility Score (0-100)
-- **CLI**: `stackpilot score <techA> <techB>` → shows compatibility score
+- **CLI**: `forgeboard score <techA> <techB>` → shows compatibility score
 - **Desktop**: Score badge on each tech in Builder when selecting
 - **Core**: New `compatibility-scorer.ts` in engine — calculates based on: shared runtime (+20), suggested pairing (+15), same category (-30), incompatible (-100), neutral (0)
 - **Registry**: Add `compatibilityNotes` field to YAML for nuanced scores
 - **Files**: core/engine/compatibility-scorer.ts, cli/commands/score.ts, registry schema update
 
 ### F02 — Environment Sync
-- **CLI**: `stackpilot env sync` — compares .env.example vs .env
-- **CLI**: `stackpilot env check` — warns about default/dangerous values
+- **CLI**: `forgeboard env sync` — compares .env.example vs .env
+- **CLI**: `forgeboard env check` — warns about default/dangerous values
 - **Core**: New `env-analyzer.ts` — parses .env files, detects patterns (SECRET_KEY=change-me, password=postgres)
 - **Files**: core/engine/env-analyzer.ts, cli/commands/env.ts
 
 ### F03 — Boilerplate Detection
-- **CLI**: `stackpilot analyze .` — scans existing project, detects stack
+- **CLI**: `forgeboard analyze .` — scans existing project, detects stack
 - **Core**: New `stack-detector.ts` — reads package.json, requirements.txt, go.mod, Cargo.toml, docker-compose.yml, Dockerfile
 - **Output**: Generates a StackDefinition from detected technologies
 - **Files**: core/engine/stack-detector.ts, cli/commands/analyze.ts
@@ -43,7 +43,7 @@
 - **Files**: core/engine/compose-generator.ts (extract), desktop/components/builder/ComposePreview.tsx
 
 ### F06 — Infrastructure as Code Generation
-- **CLI**: `stackpilot deploy --target aws|gcp|vps`
+- **CLI**: `forgeboard deploy --target aws|gcp|vps`
 - **Core**: New `infra-generator.ts` — generates Dockerfile, nginx.conf, Terraform/docker-compose for prod
 - **Templates**: Deploy templates per target (AWS ECS, GCP Cloud Run, VPS with Docker)
 - **Files**: core/engine/infra-generator.ts, cli/commands/deploy.ts, templates/deploy/
@@ -51,22 +51,22 @@
 ---
 
 ## Phase 3: Developer Experience (Week 5-6)
-> Make StackPilot indispensable in daily workflow.
+> Make Forgeboard indispensable in daily workflow.
 
 ### F07 — Stack Health Monitor
-- **CLI**: `stackpilot health` — checks deps, vulnerabilities, outdated versions
+- **CLI**: `forgeboard health` — checks deps, vulnerabilities, outdated versions
 - **Core**: New `health-checker.ts` — runs npm audit, pip audit, cargo audit, checks Docker image tags
 - **Output**: Health report with severity levels (critical, high, medium, low)
 - **Files**: core/engine/health-checker.ts, cli/commands/health.ts
 
 ### F08 — Migration Assistant
-- **CLI**: `stackpilot migrate --from express --to fastify`
+- **CLI**: `forgeboard migrate --from express --to fastify`
 - **Core**: New `migration-planner.ts` — generates step-by-step migration plan
 - **Registry**: Add `migratesTo` and `migratesFrom` fields with instructions
 - **Files**: core/engine/migration-planner.ts, cli/commands/migrate.ts, registry schema update
 
 ### F09 — Learning Paths
-- **CLI**: `stackpilot learn <technology>`
+- **CLI**: `forgeboard learn <technology>`
 - **Registry**: Add `learningResources` field to YAML (official docs, tutorials, videos)
 - **Desktop**: Learning tab in CatalogPage for each technology
 - **Files**: cli/commands/learn.ts, registry schema + all 83 YAML updates
@@ -74,47 +74,47 @@
 ---
 
 ## Phase 4: Collaboration (Week 7-8)
-> Make StackPilot work for teams.
+> Make Forgeboard work for teams.
 
 ### F10 — Stack Sharing (URL-based, no cloud)
-- **CLI**: `stackpilot share <id>` → generates URL with compressed stack in hash
-- **CLI**: `stackpilot import <url>` → imports from URL
+- **CLI**: `forgeboard share <id>` → generates URL with compressed stack in hash
+- **CLI**: `forgeboard import <url>` → imports from URL
 - **Core**: New `stack-serializer.ts` — compress/decompress stack to/from base64url
 - **Files**: core/engine/stack-serializer.ts, cli/commands/share.ts
 
 ### F11 — Stack Comparison
-- **CLI**: `stackpilot compare <stackA> <stackB>`
+- **CLI**: `forgeboard compare <stackA> <stackB>`
 - **Core**: New `stack-differ.ts` — diffs technologies, ports, configs
 - **Output**: Side-by-side comparison with added/removed/changed highlights
 - **Files**: core/engine/stack-differ.ts, cli/commands/compare.ts
 
 ### F12 — Team Stack Standards
-- **CLI**: `stackpilot lint` — validates project against .stackpilotrc
-- **Config**: `.stackpilotrc` file format — allowed techs, min versions, required profile
-- **Core**: New `standards-linter.ts` — reads .stackpilotrc and validates
+- **CLI**: `forgeboard lint` — validates project against .forgeboardrc
+- **Config**: `.forgeboardrc` file format — allowed techs, min versions, required profile
+- **Core**: New `standards-linter.ts` — reads .forgeboardrc and validates
 - **Files**: core/engine/standards-linter.ts, cli/commands/lint.ts
 
 ---
 
 ## Phase 5: Intelligence & Insights (Week 9-10)
-> Make StackPilot the smartest tool in the room.
+> Make Forgeboard the smartest tool in the room.
 
 ### F13 — Performance Profiles
 - **Registry**: Add `benchmarks` field to YAML — req/s, latency, memory for common combos
-- **CLI**: `stackpilot benchmark <stackId>` → shows expected performance
+- **CLI**: `forgeboard benchmark <stackId>` → shows expected performance
 - **Desktop**: Performance tab in StackDetailPage
 - **Files**: registry schema update, cli/commands/benchmark.ts
 
 ### F14 — Cost Estimator
-- **CLI**: `stackpilot cost <stackId>` → estimates monthly cost
+- **CLI**: `forgeboard cost <stackId>` → estimates monthly cost
 - **Core**: New `cost-estimator.ts` — maps technologies to cloud pricing
 - **Registry**: Add `pricing` field to services/databases (free tier, per-unit cost)
 - **Files**: core/engine/cost-estimator.ts, cli/commands/cost.ts
 
 ### F15 — Plugin System
-- **CLI**: `stackpilot plugin install <name>`, `stackpilot plugin list`
-- **Core**: Plugin loader that reads from ~/.stackpilot/plugins/
-- **Format**: Plugins are npm packages with a stackpilot.plugin.json manifest
+- **CLI**: `forgeboard plugin install <name>`, `forgeboard plugin list`
+- **Core**: Plugin loader that reads from ~/.forgeboard/plugins/
+- **Format**: Plugins are npm packages with a forgeboard.plugin.json manifest
 - **Files**: core/engine/plugin-loader.ts, cli/commands/plugin.ts
 
 ---

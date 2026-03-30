@@ -1,4 +1,4 @@
-import type { Template } from "@stackpilot/core";
+import type { Template } from "@forgeboard/core";
 
 export const remixFullstack: Template = {
   id: "remix-fullstack",
