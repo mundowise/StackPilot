@@ -9,7 +9,7 @@ versions:
 defaultVersion: "19"
 defaultPort: 3000
 requires: [nodejs]
-incompatibleWith: [qwik, solidjs]
+incompatibleWith: [vue, svelte, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: null
 dockerImage: null

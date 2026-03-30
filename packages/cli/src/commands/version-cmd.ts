@@ -2,8 +2,8 @@
  * stackpilot version — Stack version management.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
 import { formatJson } from "../ui/format.js";
 
@@ -82,12 +82,8 @@ export const versionCommand = new Command("version")
           process.exit(1);
         }
 
-        const techsA = new Set(
-          snapshotA.snapshot.technologies.map((t) => t.technologyId),
-        );
-        const techsB = new Set(
-          snapshotB.snapshot.technologies.map((t) => t.technologyId),
-        );
+        const techsA = new Set(snapshotA.snapshot.technologies.map((t) => t.technologyId));
+        const techsB = new Set(snapshotB.snapshot.technologies.map((t) => t.technologyId));
 
         const added = [...techsB].filter((t) => !techsA.has(t));
         const removed = [...techsA].filter((t) => !techsB.has(t));
@@ -113,9 +109,7 @@ export const versionCommand = new Command("version")
             (t) => t.technologyId === tid,
           )?.version;
           if (versionA !== versionB) {
-            console.log(
-              chalk.yellow(`  Changed: ${tid} ${versionA} → ${versionB}`),
-            );
+            console.log(chalk.yellow(`  Changed: ${tid} ${versionA} → ${versionB}`));
           }
         }
 
@@ -133,9 +127,7 @@ export const versionCommand = new Command("version")
         }
         if (snapshotA.snapshot.name !== snapshotB.snapshot.name) {
           console.log(
-            chalk.yellow(
-              `  Name: ${snapshotA.snapshot.name} → ${snapshotB.snapshot.name}`,
-            ),
+            chalk.yellow(`  Name: ${snapshotA.snapshot.name} → ${snapshotB.snapshot.name}`),
           );
         }
       }),

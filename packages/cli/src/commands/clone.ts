@@ -1,6 +1,6 @@
-import { Command } from "commander";
-import chalk from "chalk";
 import { input } from "@inquirer/prompts";
+import chalk from "chalk";
+import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
 import { formatStackRow } from "../ui/format.js";
 
@@ -17,10 +17,12 @@ export const cloneCommand = new Command("clone")
       process.exit(1);
     }
 
-    const name = opts.name || await input({
-      message: "Name for the cloned stack:",
-      default: `${source.name} (copy)`,
-    });
+    const name =
+      opts.name ||
+      (await input({
+        message: "Name for the cloned stack:",
+        default: `${source.name} (copy)`,
+      }));
 
     const { stack, validation } = engine.create({
       name,

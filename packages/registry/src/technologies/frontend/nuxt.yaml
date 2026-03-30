@@ -8,7 +8,7 @@ versions:
 defaultVersion: "3"
 defaultPort: 3000
 requires: [nodejs, vue]
-incompatibleWith: [nextjs, sveltekit, angular, remix]
+incompatibleWith: [nextjs, sveltekit, remix, astro, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: npx nuxi init
 dockerImage: null

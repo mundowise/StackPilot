@@ -9,7 +9,7 @@ versions:
 defaultVersion: "5"
 defaultPort: 4321
 requires: [nodejs]
-incompatibleWith: [remix]
+incompatibleWith: [nextjs, nuxt, sveltekit, remix, angular, qwik, solidjs]
 suggestedWith: [tailwindcss, typescript]
 officialScaffold: npm create astro@latest
 dockerImage: null

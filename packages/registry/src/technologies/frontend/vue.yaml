@@ -8,7 +8,7 @@ versions:
 defaultVersion: "3"
 defaultPort: 5173
 requires: [nodejs]
-incompatibleWith: [qwik, solidjs]
+incompatibleWith: [react, svelte, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: npm create vue@latest
 dockerImage: null

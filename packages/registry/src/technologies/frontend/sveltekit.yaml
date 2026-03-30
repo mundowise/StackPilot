@@ -8,7 +8,7 @@ versions:
 defaultVersion: "2"
 defaultPort: 5173
 requires: [nodejs, svelte]
-incompatibleWith: [nextjs, nuxt, angular, remix]
+incompatibleWith: [nextjs, nuxt, remix, astro, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss, prisma]
 officialScaffold: npx sv create
 dockerImage: null

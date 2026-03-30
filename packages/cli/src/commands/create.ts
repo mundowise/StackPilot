@@ -3,15 +3,15 @@
  * Uses official CLI tools when available and fills gaps.
  */
 
-import { Command } from "commander";
+import type { Template } from "@stackpilot/core";
+import { getAllTemplates, getTemplate } from "@stackpilot/templates";
 import chalk from "chalk";
-import ora from "ora";
 import { execSync } from "child_process";
+import { Command } from "commander";
 import * as fs from "fs";
+import ora from "ora";
 import * as path from "path";
 import { getStackEngine } from "../ui/context.js";
-import { getTemplate, getAllTemplates } from "@stackpilot/templates";
-import type { Template } from "@stackpilot/core";
 
 export const createCommand = new Command("create")
   .description("Scaffold a project from a stack or template")
@@ -23,13 +23,18 @@ export const createCommand = new Command("create")
     const engine = getStackEngine();
 
     // Check if it's a template
-    let template: Template | null = getTemplate(id);
-    let stack = engine.get(id);
+    const template: Template | null = getTemplate(id);
+    const stack = engine.get(id);
 
     if (!template && !stack) {
       console.error(chalk.red(`"${id}" is not a valid stack ID or template ID.`));
       console.log(
-        chalk.dim("Available templates: " + getAllTemplates().map((t) => t.id).join(", ")),
+        chalk.dim(
+          "Available templates: " +
+            getAllTemplates()
+              .map((t) => t.id)
+              .join(", "),
+        ),
       );
       process.exit(1);
     }
@@ -37,7 +42,9 @@ export const createCommand = new Command("create")
     if (template) {
       console.log(chalk.cyan(`Using template: ${template.name}`));
 
-      const projectName = path.basename(opts.path === "." ? template.variables.projectName || "my-project" : opts.path);
+      const projectName = path.basename(
+        opts.path === "." ? template.variables.projectName || "my-project" : opts.path,
+      );
       const targetDir = path.resolve(opts.path === "." ? projectName : opts.path);
 
       // Execute scaffold steps

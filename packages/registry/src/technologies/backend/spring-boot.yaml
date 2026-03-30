@@ -9,7 +9,7 @@ versions:
     lts: true
 defaultVersion: "3.4"
 defaultPort: 8080
-requires: []
+requires: [] # Note: Java/JDK is required externally but is not modeled in this registry
 incompatibleWith: []
 suggestedWith: [postgresql, redis]
 officialScaffold: null

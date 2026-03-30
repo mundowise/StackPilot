@@ -9,7 +9,7 @@ versions:
 defaultVersion: "19"
 defaultPort: 4200
 requires: [nodejs]
-incompatibleWith: [nextjs, nuxt, sveltekit, qwik, solidjs]
+incompatibleWith: [react, vue, svelte, nextjs, nuxt, sveltekit, remix, astro, qwik, solidjs]
 suggestedWith: [typescript]
 officialScaffold: npx @angular/cli new
 dockerImage: null

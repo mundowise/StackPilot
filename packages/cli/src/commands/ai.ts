@@ -4,11 +4,12 @@
  * Uses the Anthropic API for natural language processing.
  */
 
-import { Command } from "commander";
-import chalk from "chalk";
-import ora from "ora";
 import Anthropic from "@anthropic-ai/sdk";
-import { getStackEngine, getRulesEngine } from "../ui/context.js";
+import chalk from "chalk";
+import { Command } from "commander";
+import ora from "ora";
+import { getRulesEngine, getStackEngine } from "../ui/context.js";
+import { box, error, info, sectionHeader } from "../ui/format.js";
 
 function getClient(): Anthropic | null {
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -19,12 +20,14 @@ function getClient(): Anthropic | null {
 function requireApiKey(): Anthropic {
   const client = getClient();
   if (!client) {
-    console.error(
-      chalk.red("ANTHROPIC_API_KEY not set."),
-    );
-    console.log(
-      chalk.dim("Set it: export ANTHROPIC_API_KEY=sk-ant-..."),
-    );
+    console.error("");
+    console.error(error("ANTHROPIC_API_KEY is not set."));
+    console.error("");
+    console.error(chalk.dim("  To use AI features, set your API key:"));
+    console.error(chalk.dim("    export ANTHROPIC_API_KEY=sk-ant-..."));
+    console.error("");
+    console.error(chalk.dim("  Get one at: https://console.anthropic.com/settings/keys"));
+    console.error("");
     process.exit(1);
   }
   return client;
@@ -73,11 +76,26 @@ Be concise. Only suggest technologies from the list above.`,
           );
 
           spinner.stop();
-          console.log(chalk.bold("\nSuggested Stack:\n"));
-          console.log(result);
+          console.log("");
+          console.log(box(result, "Suggested Stack"));
+          console.log("");
+          console.log(
+            chalk.dim(
+              "  To create this stack: stackpilot generate --name <name> --path . --techs <ids>",
+            ),
+          );
+          console.log("");
         } catch (err) {
           spinner.fail("AI request failed");
-          console.error(chalk.dim(err instanceof Error ? err.message : String(err)));
+          if (err instanceof Error) {
+            if (err.message.includes("401") || err.message.includes("authentication")) {
+              console.error(error("Invalid API key. Check your ANTHROPIC_API_KEY."));
+            } else if (err.message.includes("429")) {
+              console.error(error("Rate limited. Try again in a moment."));
+            } else {
+              console.error(chalk.dim(`  ${err.message}`));
+            }
+          }
         }
       }),
   )
@@ -92,7 +110,8 @@ Be concise. Only suggest technologies from the list above.`,
         const stack = engine.get(stackId);
 
         if (!stack) {
-          console.error(chalk.red(`Stack "${stackId}" not found.`));
+          console.error(error(`Stack "${stackId}" not found.`));
+          console.error(chalk.dim("  Run `stackpilot list` to see saved stacks."));
           process.exit(1);
         }
 
@@ -138,7 +157,8 @@ Include: project description, tech stack table, getting started (with docker com
         const stack = engine.get(stackId);
 
         if (!stack) {
-          console.error(chalk.red(`Stack "${stackId}" not found.`));
+          console.error(error(`Stack "${stackId}" not found.`));
+          console.error(chalk.dim("  Run `stackpilot list` to see saved stacks."));
           process.exit(1);
         }
 
@@ -169,8 +189,9 @@ Be concise and practical.`,
           );
 
           spinner.stop();
-          console.log(chalk.bold("\nStack Analysis:\n"));
-          console.log(result);
+          console.log("");
+          console.log(box(result, "Stack Analysis"));
+          console.log("");
         } catch (err) {
           spinner.fail("AI request failed");
           console.error(chalk.dim(err instanceof Error ? err.message : String(err)));

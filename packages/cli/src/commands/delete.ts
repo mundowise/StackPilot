@@ -2,9 +2,9 @@
  * stackpilot delete <id> — Delete a saved stack.
  */
 
-import { Command } from "commander";
-import chalk from "chalk";
 import { confirm } from "@inquirer/prompts";
+import chalk from "chalk";
+import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
 
 export const deleteCommand = new Command("delete")

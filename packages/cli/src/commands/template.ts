@@ -1,11 +1,11 @@
-import { Command } from "commander";
-import chalk from "chalk";
-import { randomUUID } from "crypto";
 import { input } from "@inquirer/prompts";
-import { getAllTemplates, getTemplate } from "@stackpilot/templates";
-import { getStackEngine, getRulesEngine } from "../ui/context.js";
 import { getDatabase } from "@stackpilot/core";
-import { formatTemplate, formatStackRow, formatValidation, formatJson } from "../ui/format.js";
+import { getAllTemplates, getTemplate } from "@stackpilot/templates";
+import chalk from "chalk";
+import { Command } from "commander";
+import { randomUUID } from "crypto";
+import { getRulesEngine, getStackEngine } from "../ui/context.js";
+import { formatJson, formatStackRow, formatTemplate, formatValidation } from "../ui/format.js";
 
 export const templateCommand = new Command("template")
   .description("Manage templates")
@@ -36,19 +36,28 @@ export const templateCommand = new Command("template")
         const template = getTemplate(templateId);
         if (!template) {
           console.error(chalk.red(`Template "${templateId}" not found.`));
-          console.log(chalk.dim("Available: " + getAllTemplates().map(t => t.id).join(", ")));
+          console.log(
+            chalk.dim(
+              "Available: " +
+                getAllTemplates()
+                  .map((t) => t.id)
+                  .join(", "),
+            ),
+          );
           process.exit(1);
         }
 
         const rules = getRulesEngine();
         const engine = getStackEngine();
 
-        const name = opts.name || await input({
-          message: "Stack name:",
-          default: template.variables.projectName || template.name,
-        });
+        const name =
+          opts.name ||
+          (await input({
+            message: "Stack name:",
+            default: template.variables.projectName || template.name,
+          }));
 
-        const technologies = template.technologyIds.map(tid => {
+        const technologies = template.technologyIds.map((tid) => {
           const tech = rules.getTechnology(tid);
           return { technologyId: tid, version: tech?.defaultVersion || "latest" };
         });
@@ -88,17 +97,19 @@ export const templateCommand = new Command("template")
           process.exit(1);
         }
 
-        const name = opts.name || await input({
-          message: "Template name:",
-          default: `${stack.name} Template`,
-        });
+        const name =
+          opts.name ||
+          (await input({
+            message: "Template name:",
+            default: `${stack.name} Template`,
+          }));
 
         const db = getDatabase();
         const id = randomUUID();
-        const techIds = stack.technologies.map(t => t.technologyId);
+        const techIds = stack.technologies.map((t) => t.technologyId);
 
         db.prepare(
-          "INSERT INTO custom_templates (id, name, description, profile, technology_ids) VALUES (?, ?, ?, ?, ?)"
+          "INSERT INTO custom_templates (id, name, description, profile, technology_ids) VALUES (?, ?, ?, ?, ?)",
         ).run(id, name, stack.description, stack.profile, JSON.stringify(techIds));
 
         console.log(chalk.green(`\n✓ Template "${name}" saved`));
@@ -114,15 +125,21 @@ export const templateCommand = new Command("template")
       .option("--json", "Output as JSON")
       .action((opts) => {
         const db = getDatabase();
-        const rows = db.prepare("SELECT * FROM custom_templates ORDER BY created_at DESC").all() as any[];
+        const rows = db
+          .prepare("SELECT * FROM custom_templates ORDER BY created_at DESC")
+          .all() as any[];
 
         if (rows.length === 0) {
-          console.log(chalk.dim("No custom templates saved yet. Use `stackpilot template save <stack-id>`."));
+          console.log(
+            chalk.dim("No custom templates saved yet. Use `stackpilot template save <stack-id>`."),
+          );
           return;
         }
 
         if (opts.json) {
-          console.log(formatJson(rows.map(r => ({ ...r, technology_ids: JSON.parse(r.technology_ids) }))));
+          console.log(
+            formatJson(rows.map((r) => ({ ...r, technology_ids: JSON.parse(r.technology_ids) }))),
+          );
           return;
         }
 
@@ -144,7 +161,9 @@ export const templateCommand = new Command("template")
       .option("--name <name>", "Stack name")
       .action(async (templateId: string, opts) => {
         const db = getDatabase();
-        const row = db.prepare("SELECT * FROM custom_templates WHERE id = ?").get(templateId) as any;
+        const row = db
+          .prepare("SELECT * FROM custom_templates WHERE id = ?")
+          .get(templateId) as any;
 
         if (!row) {
           console.error(chalk.red(`Custom template "${templateId}" not found.`));
@@ -155,10 +174,12 @@ export const templateCommand = new Command("template")
         const engine = getStackEngine();
         const techIds = JSON.parse(row.technology_ids);
 
-        const name = opts.name || await input({
-          message: "Stack name:",
-          default: row.name.replace(" Template", ""),
-        });
+        const name =
+          opts.name ||
+          (await input({
+            message: "Stack name:",
+            default: row.name.replace(" Template", ""),
+          }));
 
         const technologies = techIds.map((tid: string) => {
           const tech = rules.getTechnology(tid);

@@ -10,7 +10,7 @@ versions:
 defaultVersion: "11"
 defaultPort: 3000
 requires: [nodejs, typescript]
-incompatibleWith: [express, fastify]
+incompatibleWith: [express, fastify, hono]
 suggestedWith: [prisma, postgresql]
 officialScaffold: "npx @nestjs/cli new"
 dockerImage: null

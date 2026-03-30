@@ -9,7 +9,7 @@ versions:
 defaultVersion: "1.12"
 defaultPort: 5173
 requires: [nodejs]
-incompatibleWith: [react, vue, svelte, angular]
+incompatibleWith: [react, vue, svelte, angular, solidjs, nextjs, nuxt, sveltekit, remix, astro]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: "npm create qwik@latest"
 dockerImage: null

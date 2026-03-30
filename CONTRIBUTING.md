@@ -18,7 +18,7 @@ Thank you for considering a contribution to StackPilot. This document explains h
 ```bash
 # Clone the repository
 git clone https://github.com/Xplus-technologies-open-in-process/StackPilot.git
-cd stackpilot
+cd StackPilot
 
 # Install dependencies
 pnpm install

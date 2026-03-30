@@ -13,7 +13,7 @@ requires: []
 incompatibleWith: []
 suggestedWith: []
 officialScaffold: null
-dockerImage: rabbitmq:3-management
+dockerImage: rabbitmq:4-management
 healthCheck:
   command: rabbitmq-diagnostics -q ping
   interval: 10s

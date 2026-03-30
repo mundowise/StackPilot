@@ -9,7 +9,7 @@ versions:
 defaultVersion: "15"
 defaultPort: 3000
 requires: [nodejs, react]
-incompatibleWith: [nuxt, sveltekit, angular, remix]
+incompatibleWith: [nuxt, sveltekit, remix, astro, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss, prisma]
 officialScaffold: npx create-next-app@latest
 dockerImage: null

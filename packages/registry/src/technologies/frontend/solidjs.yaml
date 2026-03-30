@@ -9,7 +9,7 @@ versions:
 defaultVersion: "1.9"
 defaultPort: 3000
 requires: [nodejs]
-incompatibleWith: [react, vue, svelte, angular]
+incompatibleWith: [react, vue, svelte, angular, qwik, nextjs, nuxt, sveltekit, remix, astro]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: "npx degit solidjs/templates/ts"
 dockerImage: null

@@ -2,9 +2,9 @@
  * stackpilot save — Save the current stack state (creates version snapshot).
  */
 
-import { Command } from "commander";
-import chalk from "chalk";
 import { input } from "@inquirer/prompts";
+import chalk from "chalk";
+import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
 
 export const saveCommand = new Command("save")
@@ -34,9 +34,5 @@ export const saveCommand = new Command("save")
       process.exit(1);
     }
 
-    console.log(
-      chalk.green(
-        `✓ Saved "${stack.name}" as v${result.stack.version}: ${message}`,
-      ),
-    );
+    console.log(chalk.green(`✓ Saved "${stack.name}" as v${result.stack.version}: ${message}`));
   });

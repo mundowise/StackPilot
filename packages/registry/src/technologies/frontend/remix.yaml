@@ -9,7 +9,7 @@ versions:
 defaultVersion: "2.15"
 defaultPort: 3000
 requires: [nodejs, react]
-incompatibleWith: [nextjs, nuxt, sveltekit, astro]
+incompatibleWith: [nextjs, nuxt, sveltekit, astro, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss, prisma]
 officialScaffold: "npx create-remix@latest"
 dockerImage: null

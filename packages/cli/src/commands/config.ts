@@ -2,16 +2,16 @@
  * stackpilot config — Manage user preferences.
  */
 
-import { Command } from "commander";
-import chalk from "chalk";
-import {
-  getPreferences,
-  setPreference,
-  resetPreferences,
-  getPreferenceKeys,
-  getDefaultPreferences,
-} from "@stackpilot/core";
 import type { UserPreferences } from "@stackpilot/core";
+import {
+  getDefaultPreferences,
+  getPreferenceKeys,
+  getPreferences,
+  resetPreferences,
+  setPreference,
+} from "@stackpilot/core";
+import chalk from "chalk";
+import { Command } from "commander";
 import { formatJson } from "../ui/format.js";
 
 export const configCommand = new Command("config")
@@ -33,9 +33,7 @@ export const configCommand = new Command("config")
         for (const key of getPreferenceKeys()) {
           const value = prefs[key];
           const isDefault = value === defaults[key];
-          console.log(
-            `  ${chalk.cyan(key)}: ${value} ${isDefault ? chalk.dim("(default)") : ""}`,
-          );
+          console.log(`  ${chalk.cyan(key)}: ${value} ${isDefault ? chalk.dim("(default)") : ""}`);
         }
       }),
   )
@@ -47,9 +45,7 @@ export const configCommand = new Command("config")
       .action((key: string, value: string) => {
         const validKeys = getPreferenceKeys();
         if (!validKeys.includes(key as keyof UserPreferences)) {
-          console.error(
-            chalk.red(`Invalid key "${key}". Valid keys: ${validKeys.join(", ")}`),
-          );
+          console.error(chalk.red(`Invalid key "${key}". Valid keys: ${validKeys.join(", ")}`));
           process.exit(1);
         }
 
@@ -72,10 +68,8 @@ export const configCommand = new Command("config")
       }),
   )
   .addCommand(
-    new Command("reset")
-      .description("Reset all preferences to defaults")
-      .action(() => {
-        resetPreferences();
-        console.log(chalk.green("✓ Preferences reset to defaults."));
-      }),
+    new Command("reset").description("Reset all preferences to defaults").action(() => {
+      resetPreferences();
+      console.log(chalk.green("✓ Preferences reset to defaults."));
+    }),
   );

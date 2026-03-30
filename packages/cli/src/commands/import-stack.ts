@@ -2,13 +2,13 @@
  * stackpilot import <file> — Import a stack definition from YAML or JSON.
  */
 
-import { Command } from "commander";
+import type { StackProfile, StackTechnology } from "@stackpilot/core";
 import chalk from "chalk";
+import { Command } from "commander";
 import * as fs from "fs";
 import { parse as yamlParse } from "yaml";
 import { getStackEngine } from "../ui/context.js";
 import { formatStackRow, formatValidation } from "../ui/format.js";
-import type { StackProfile, StackTechnology } from "@stackpilot/core";
 
 interface ImportedStack {
   name: string;
@@ -54,9 +54,7 @@ export const importCommand = new Command("import")
     }
 
     if (!data.name || !data.technologies || !Array.isArray(data.technologies)) {
-      console.error(
-        chalk.red("Invalid stack file. Required: name, technologies array."),
-      );
+      console.error(chalk.red("Invalid stack file. Required: name, technologies array."));
       process.exit(1);
     }
 

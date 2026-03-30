@@ -5,26 +5,29 @@
  * generates per-directory .env files, and leaves everything ready to code.
  */
 
-import { Command } from "commander";
-import { execSync } from "child_process";
-import chalk from "chalk";
-import * as fs from "fs";
-import * as path from "path";
-import {
-  getStackEngine,
-  getScaffoldOrchestrator,
-  getRulesEngine,
-} from "../ui/context.js";
 import type { StackProfile, StackTechnology, Technology } from "@stackpilot/core";
 import { installTechnologies } from "@stackpilot/core";
+import chalk from "chalk";
+import { execSync } from "child_process";
+import { Command } from "commander";
+import * as fs from "fs";
+import ora from "ora";
+import * as path from "path";
+import { getRulesEngine, getScaffoldOrchestrator, getStackEngine } from "../ui/context.js";
+import {
+  box,
+  error,
+  formatValidation,
+  gradientHeader,
+  nextSteps,
+  stepIndicator,
+  success,
+  warning,
+} from "../ui/format.js";
 
 // ─── Helpers ────────────────────────────────────────
 
-function run(
-  cmd: string,
-  cwd: string,
-  timeoutMs = 120_000,
-): { success: boolean; output: string } {
+function run(cmd: string, cwd: string, timeoutMs = 120_000): { success: boolean; output: string } {
   try {
     const out = execSync(cmd, {
       cwd,
@@ -86,15 +89,18 @@ function scaffoldFrontend(
     const r = run(`npx @angular/cli new frontend --skip-git --defaults`, parentDir);
     log.push(r.success ? `Angular scaffolded` : `Angular (manual: npx @angular/cli new)`);
   } else if (tech.id === "react" || tech.id === "solidjs" || tech.id === "qwik") {
-    // Vite-based SPA
-    const template = tech.id === "solidjs" ? "solid-ts" : tech.id === "qwik" ? "qwik-ts" : "react-ts";
+    const template =
+      tech.id === "solidjs" ? "solid-ts" : tech.id === "qwik" ? "qwik-ts" : "react-ts";
     const r = run(`npm create vite@latest frontend -- --template ${template}`, parentDir);
-    log.push(r.success ? `${tech.name} (Vite) scaffolded` : `${tech.name} (manual: npm create vite@latest)`);
+    log.push(
+      r.success
+        ? `${tech.name} (Vite) scaffolded`
+        : `${tech.name} (manual: npm create vite@latest)`,
+    );
   } else {
     log.push(`${tech.name} (create manually in frontend/)`);
   }
 
-  // Create frontend .env.example
   const envLines = [
     `# ${projectName} — Frontend Environment Variables`,
     "",
@@ -133,172 +139,246 @@ function scaffoldBackend(
   // Python backends
   if (tech.id === "django" || tech.id === "fastapi" || tech.id === "flask") {
     run(`python3 -m venv .venv`, backendDir, 30_000);
-
     const pip = path.join(backendDir, ".venv/bin/pip");
 
     if (tech.id === "django") {
-      run(`${pip} install django djangorestframework django-cors-headers python-dotenv psycopg2-binary`, backendDir, 90_000);
-      run(`${path.join(backendDir, ".venv/bin/django-admin")} startproject config .`, backendDir, 15_000);
-
-      // Create requirements.txt
-      writeFile(path.join(backendDir, "requirements.txt"), [
-        "django>=5.1", "djangorestframework>=3.15", "django-cors-headers>=4.4",
-        "python-dotenv>=1.0", "psycopg2-binary>=2.9", "gunicorn>=22.0",
-        hasRedis ? "django-redis>=5.4" : "",
-      ].filter(Boolean).join("\n") + "\n");
+      run(
+        `${pip} install django djangorestframework django-cors-headers python-dotenv psycopg2-binary`,
+        backendDir,
+        90_000,
+      );
+      run(
+        `${path.join(backendDir, ".venv/bin/django-admin")} startproject config .`,
+        backendDir,
+        15_000,
+      );
+      writeFile(
+        path.join(backendDir, "requirements.txt"),
+        [
+          "django>=5.1",
+          "djangorestframework>=3.15",
+          "django-cors-headers>=4.4",
+          "python-dotenv>=1.0",
+          "psycopg2-binary>=2.9",
+          "gunicorn>=22.0",
+          hasRedis ? "django-redis>=5.4" : "",
+        ]
+          .filter(Boolean)
+          .join("\n") + "\n",
+      );
       log.push("Django project created");
     } else if (tech.id === "fastapi") {
-      run(`${pip} install fastapi uvicorn sqlalchemy alembic python-dotenv psycopg2-binary`, backendDir, 90_000);
-
-      writeFile(path.join(backendDir, "main.py"), [
-        `from fastapi import FastAPI`,
-        `from fastapi.middleware.cors import CORSMiddleware`,
-        ``,
-        `app = FastAPI(title="${projectName}")`,
-        ``,
-        `app.add_middleware(`,
-        `    CORSMiddleware,`,
-        `    allow_origins=["http://localhost:3000", "http://localhost:5173"],`,
-        `    allow_credentials=True,`,
-        `    allow_methods=["*"],`,
-        `    allow_headers=["*"],`,
-        `)`,
-        ``,
-        `@app.get("/health")`,
-        `def health():`,
-        `    return {"status": "ok"}`,
-        ``,
-        `@app.get("/api")`,
-        `def root():`,
-        `    return {"message": "Welcome to ${projectName} API"}`,
-      ].join("\n") + "\n");
-
-      writeFile(path.join(backendDir, "requirements.txt"), [
-        "fastapi>=0.115", "uvicorn[standard]>=0.30", "sqlalchemy>=2.0",
-        "alembic>=1.13", "python-dotenv>=1.0", "psycopg2-binary>=2.9",
-        hasRedis ? "redis>=5.0" : "",
-      ].filter(Boolean).join("\n") + "\n");
+      run(
+        `${pip} install fastapi uvicorn sqlalchemy alembic python-dotenv psycopg2-binary`,
+        backendDir,
+        90_000,
+      );
+      writeFile(
+        path.join(backendDir, "main.py"),
+        [
+          `from fastapi import FastAPI`,
+          `from fastapi.middleware.cors import CORSMiddleware`,
+          ``,
+          `app = FastAPI(title="${projectName}")`,
+          ``,
+          `app.add_middleware(`,
+          `    CORSMiddleware,`,
+          `    allow_origins=["http://localhost:3000", "http://localhost:5173"],`,
+          `    allow_credentials=True,`,
+          `    allow_methods=["*"],`,
+          `    allow_headers=["*"],`,
+          `)`,
+          ``,
+          `@app.get("/health")`,
+          `def health():`,
+          `    return {"status": "ok"}`,
+          ``,
+          `@app.get("/api")`,
+          `def root():`,
+          `    return {"message": "Welcome to ${projectName} API"}`,
+        ].join("\n") + "\n",
+      );
+      writeFile(
+        path.join(backendDir, "requirements.txt"),
+        [
+          "fastapi>=0.115",
+          "uvicorn[standard]>=0.30",
+          "sqlalchemy>=2.0",
+          "alembic>=1.13",
+          "python-dotenv>=1.0",
+          "psycopg2-binary>=2.9",
+          hasRedis ? "redis>=5.0" : "",
+        ]
+          .filter(Boolean)
+          .join("\n") + "\n",
+      );
       log.push("FastAPI project created");
     } else if (tech.id === "flask") {
       run(`${pip} install flask flask-cors python-dotenv`, backendDir, 60_000);
-
-      writeFile(path.join(backendDir, "app.py"), [
-        `from flask import Flask, jsonify`,
-        `from flask_cors import CORS`,
-        ``,
-        `app = Flask(__name__)`,
-        `CORS(app)`,
-        ``,
-        `@app.route("/health")`,
-        `def health():`,
-        `    return jsonify(status="ok")`,
-        ``,
-        `@app.route("/api")`,
-        `def root():`,
-        `    return jsonify(message="Welcome to ${projectName} API")`,
-      ].join("\n") + "\n");
-
-      writeFile(path.join(backendDir, "requirements.txt"), [
-        "flask>=3.0", "flask-cors>=4.0", "python-dotenv>=1.0",
-      ].join("\n") + "\n");
+      writeFile(
+        path.join(backendDir, "app.py"),
+        [
+          `from flask import Flask, jsonify`,
+          `from flask_cors import CORS`,
+          ``,
+          `app = Flask(__name__)`,
+          `CORS(app)`,
+          ``,
+          `@app.route("/health")`,
+          `def health():`,
+          `    return jsonify(status="ok")`,
+          ``,
+          `@app.route("/api")`,
+          `def root():`,
+          `    return jsonify(message="Welcome to ${projectName} API")`,
+        ].join("\n") + "\n",
+      );
+      writeFile(
+        path.join(backendDir, "requirements.txt"),
+        ["flask>=3.0", "flask-cors>=4.0", "python-dotenv>=1.0"].join("\n") + "\n",
+      );
       log.push("Flask project created");
     }
 
-    // Backend .env.example
-    writeFile(path.join(backendDir, ".env.example"), [
-      `# ${projectName} — Backend Environment Variables`,
-      ``,
-      `DEBUG=True`,
-      `SECRET_KEY=change-me-in-production-${Date.now()}`,
-      `DATABASE_URL=${dbUrl}`,
-      hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
-      `ALLOWED_HOSTS=localhost,127.0.0.1`,
-      `CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173`,
-      `PORT=8000`,
-    ].filter(Boolean).join("\n") + "\n");
+    writeFile(
+      path.join(backendDir, ".env.example"),
+      [
+        `# ${projectName} — Backend Environment Variables`,
+        ``,
+        `DEBUG=True`,
+        `SECRET_KEY=change-me-in-production`,
+        `DATABASE_URL=${dbUrl}`,
+        hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
+        `ALLOWED_HOSTS=localhost,127.0.0.1`,
+        `CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173`,
+        `PORT=8000`,
+      ]
+        .filter(Boolean)
+        .join("\n") + "\n",
+    );
     log.push("backend/.env.example created");
   }
 
   // Node.js backends
-  if (tech.id === "express" || tech.id === "fastify" || tech.id === "hono" || tech.id === "nestjs") {
+  if (
+    tech.id === "express" ||
+    tech.id === "fastify" ||
+    tech.id === "hono" ||
+    tech.id === "nestjs"
+  ) {
     if (tech.id === "nestjs") {
-      const r = run(`npx @nestjs/cli new backend --package-manager npm --skip-git`, backendDir.replace(/\/backend$/, ""), 120_000);
+      const r = run(
+        `npx @nestjs/cli new backend --package-manager npm --skip-git`,
+        backendDir.replace(/\/backend$/, ""),
+        120_000,
+      );
       log.push(r.success ? "NestJS project created" : "NestJS (manual: npx @nestjs/cli new)");
     } else {
-      // Init Node project
-      writeFile(path.join(backendDir, "package.json"), JSON.stringify({
-        name: `${projectName}-backend`,
-        version: "0.1.0",
-        private: true,
-        type: "module",
-        scripts: {
-          dev: tech.id === "hono" ? "npx tsx watch src/index.ts" : "npx tsx watch src/index.ts",
-          build: "tsc",
-          start: "node dist/index.js",
-        },
-      }, null, 2) + "\n");
+      writeFile(
+        path.join(backendDir, "package.json"),
+        JSON.stringify(
+          {
+            name: `${projectName}-backend`,
+            version: "0.1.0",
+            private: true,
+            type: "module",
+            scripts: {
+              dev: "npx tsx watch src/index.ts",
+              build: "tsc",
+              start: "node dist/index.js",
+            },
+          },
+          null,
+          2,
+        ) + "\n",
+      );
 
-      writeFile(path.join(backendDir, "tsconfig.json"), JSON.stringify({
-        compilerOptions: {
-          target: "ES2022", module: "ESNext", moduleResolution: "bundler",
-          outDir: "dist", rootDir: "src", strict: true, esModuleInterop: true,
-          skipLibCheck: true,
-        },
-        include: ["src"],
-      }, null, 2) + "\n");
+      writeFile(
+        path.join(backendDir, "tsconfig.json"),
+        JSON.stringify(
+          {
+            compilerOptions: {
+              target: "ES2022",
+              module: "ESNext",
+              moduleResolution: "bundler",
+              outDir: "dist",
+              rootDir: "src",
+              strict: true,
+              esModuleInterop: true,
+              skipLibCheck: true,
+            },
+            include: ["src"],
+          },
+          null,
+          2,
+        ) + "\n",
+      );
 
-      const serverCode = tech.id === "hono"
-        ? `import { Hono } from "hono";\nimport { cors } from "hono/cors";\nimport { serve } from "@hono/node-server";\n\nconst app = new Hono();\napp.use("*", cors());\n\napp.get("/health", (c) => c.json({ status: "ok" }));\napp.get("/api", (c) => c.json({ message: "Welcome to ${projectName} API" }));\n\nserve({ fetch: app.fetch, port: 8000 });\nconsole.log("Server running on http://localhost:8000");\n`
-        : tech.id === "fastify"
-          ? `import Fastify from "fastify";\nimport cors from "@fastify/cors";\n\nconst app = Fastify();\nawait app.register(cors);\n\napp.get("/health", async () => ({ status: "ok" }));\napp.get("/api", async () => ({ message: "Welcome to ${projectName} API" }));\n\nawait app.listen({ port: 8000, host: "0.0.0.0" });\nconsole.log("Server running on http://localhost:8000");\n`
-          : `import express from "express";\nimport cors from "cors";\n\nconst app = express();\napp.use(cors());\napp.use(express.json());\n\napp.get("/health", (_, res) => res.json({ status: "ok" }));\napp.get("/api", (_, res) => res.json({ message: "Welcome to ${projectName} API" }));\n\napp.listen(8000, () => console.log("Server running on http://localhost:8000"));\n`;
+      const serverCode =
+        tech.id === "hono"
+          ? `import { Hono } from "hono";\nimport { cors } from "hono/cors";\nimport { serve } from "@hono/node-server";\n\nconst app = new Hono();\napp.use("*", cors());\n\napp.get("/health", (c) => c.json({ status: "ok" }));\napp.get("/api", (c) => c.json({ message: "Welcome to ${projectName} API" }));\n\nserve({ fetch: app.fetch, port: 8000 });\nconsole.log("Server running on http://localhost:8000");\n`
+          : tech.id === "fastify"
+            ? `import Fastify from "fastify";\nimport cors from "@fastify/cors";\n\nconst app = Fastify();\nawait app.register(cors);\n\napp.get("/health", async () => ({ status: "ok" }));\napp.get("/api", async () => ({ message: "Welcome to ${projectName} API" }));\n\nawait app.listen({ port: 8000, host: "0.0.0.0" });\nconsole.log("Server running on http://localhost:8000");\n`
+            : `import express from "express";\nimport cors from "cors";\n\nconst app = express();\napp.use(cors());\napp.use(express.json());\n\napp.get("/health", (_, res) => res.json({ status: "ok" }));\napp.get("/api", (_, res) => res.json({ message: "Welcome to ${projectName} API" }));\n\napp.listen(8000, () => console.log("Server running on http://localhost:8000"));\n`;
 
       fs.mkdirSync(path.join(backendDir, "src"), { recursive: true });
       writeFile(path.join(backendDir, "src/index.ts"), serverCode);
 
-      // Install deps
-      const deps = tech.id === "hono"
-        ? "hono @hono/node-server"
-        : tech.id === "fastify"
-          ? "fastify @fastify/cors"
-          : "express cors";
-      const devDeps = "typescript tsx @types/node" + (tech.id === "express" ? " @types/express @types/cors" : "");
+      const deps =
+        tech.id === "hono"
+          ? "hono @hono/node-server"
+          : tech.id === "fastify"
+            ? "fastify @fastify/cors"
+            : "express cors";
+      const devDeps =
+        "typescript tsx @types/node" + (tech.id === "express" ? " @types/express @types/cors" : "");
 
       run(`npm install ${deps}`, backendDir, 60_000);
       run(`npm install -D ${devDeps}`, backendDir, 60_000);
       log.push(`${tech.name} project created`);
     }
 
-    // Backend .env.example for Node
-    writeFile(path.join(backendDir, ".env.example"), [
-      `# ${projectName} — Backend Environment Variables`,
-      ``,
-      `NODE_ENV=development`,
-      `PORT=8000`,
-      `DATABASE_URL=${dbUrl}`,
-      hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
-      `CORS_ORIGINS=http://localhost:3000,http://localhost:5173`,
-    ].filter(Boolean).join("\n") + "\n");
+    writeFile(
+      path.join(backendDir, ".env.example"),
+      [
+        `# ${projectName} — Backend Environment Variables`,
+        ``,
+        `NODE_ENV=development`,
+        `PORT=8000`,
+        `DATABASE_URL=${dbUrl}`,
+        hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
+        `CORS_ORIGINS=http://localhost:3000,http://localhost:5173`,
+      ]
+        .filter(Boolean)
+        .join("\n") + "\n",
+    );
     log.push("backend/.env.example created");
   }
 
   // Go backends
   if (tech.id === "gin" || tech.id === "echo") {
     run(`go mod init ${projectName}`, backendDir, 15_000);
-    const framework = tech.id === "gin" ? "github.com/gin-gonic/gin" : "github.com/labstack/echo/v4";
+    const framework =
+      tech.id === "gin" ? "github.com/gin-gonic/gin" : "github.com/labstack/echo/v4";
     run(`go get ${framework}`, backendDir, 60_000);
 
-    const mainCode = tech.id === "gin"
-      ? `package main\n\nimport (\n\t"github.com/gin-gonic/gin"\n)\n\nfunc main() {\n\tr := gin.Default()\n\tr.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })\n\tr.GET("/api", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Welcome to ${projectName} API"}) })\n\tr.Run(":8000")\n}\n`
-      : `package main\n\nimport (\n\t"net/http"\n\t"github.com/labstack/echo/v4"\n)\n\nfunc main() {\n\te := echo.New()\n\te.GET("/health", func(c echo.Context) error { return c.JSON(http.StatusOK, map[string]string{"status": "ok"}) })\n\te.GET("/api", func(c echo.Context) error { return c.JSON(http.StatusOK, map[string]string{"message": "Welcome to ${projectName} API"}) })\n\te.Start(":8000")\n}\n`;
+    const mainCode =
+      tech.id === "gin"
+        ? `package main\n\nimport (\n\t"github.com/gin-gonic/gin"\n)\n\nfunc main() {\n\tr := gin.Default()\n\tr.GET("/health", func(c *gin.Context) { c.JSON(200, gin.H{"status": "ok"}) })\n\tr.GET("/api", func(c *gin.Context) { c.JSON(200, gin.H{"message": "Welcome to ${projectName} API"}) })\n\tr.Run(":8000")\n}\n`
+        : `package main\n\nimport (\n\t"net/http"\n\t"github.com/labstack/echo/v4"\n)\n\nfunc main() {\n\te := echo.New()\n\te.GET("/health", func(c echo.Context) error { return c.JSON(http.StatusOK, map[string]string{"status": "ok"}) })\n\te.GET("/api", func(c echo.Context) error { return c.JSON(http.StatusOK, map[string]string{"message": "Welcome to ${projectName} API"}) })\n\te.Start(":8000")\n}\n`;
     writeFile(path.join(backendDir, "main.go"), mainCode);
 
-    writeFile(path.join(backendDir, ".env.example"), [
-      `# ${projectName} — Backend Environment Variables`,
-      `PORT=8000`,
-      `DATABASE_URL=${dbUrl}`,
-      hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
-    ].filter(Boolean).join("\n") + "\n");
+    writeFile(
+      path.join(backendDir, ".env.example"),
+      [
+        `# ${projectName} — Backend Environment Variables`,
+        `PORT=8000`,
+        `DATABASE_URL=${dbUrl}`,
+        hasRedis ? `REDIS_URL=redis://localhost:6379/0` : "",
+      ]
+        .filter(Boolean)
+        .join("\n") + "\n",
+    );
     log.push(`${tech.name} project created`);
     log.push("backend/.env.example created");
   }
@@ -323,20 +403,65 @@ export const generateCommand = new Command("generate")
     const orchestrator = getScaffoldOrchestrator();
     const rules = getRulesEngine();
 
+    // ── Input validation ──
     const techIds = opts.techs
       .split(",")
       .map((s: string) => s.trim())
       .filter(Boolean);
+
+    if (techIds.length === 0) {
+      console.error(error("No technologies specified."));
+      console.error(
+        chalk.dim("  Use --techs with comma-separated IDs: --techs nextjs,postgresql,prisma"),
+      );
+      process.exit(1);
+    }
+
+    if (!opts.name || opts.name.trim().length === 0) {
+      console.error(error("Project name is required."));
+      process.exit(1);
+    }
+
+    const parentDir = path.resolve(opts.path);
+    if (!fs.existsSync(parentDir)) {
+      console.error(error(`Parent directory does not exist: ${parentDir}`));
+      process.exit(1);
+    }
+
     const targetDir = path.resolve(opts.path, opts.name);
+    if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
+      console.error(error(`Target directory already exists and is not empty: ${targetDir}`));
+      process.exit(1);
+    }
+
+    // Validate all tech IDs exist
+    const unknownTechs = techIds.filter((id: string) => !rules.getTechnology(id));
+    if (unknownTechs.length > 0) {
+      console.error(error(`Unknown technologies: ${unknownTechs.join(", ")}`));
+      console.error(chalk.dim("  Run `stackpilot browse` to see available technologies."));
+      process.exit(1);
+    }
+
     const projectName = opts.name;
 
-    // 1. Build technology list
+    if (!opts.json) {
+      console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ Generate Project")}\n`);
+    }
+
+    // ── Step 1: Build technology list ──
+    const spinner1 = !opts.json
+      ? ora(stepIndicator(1, 5, "Building technology list")).start()
+      : null;
     const technologies: StackTechnology[] = techIds.map((id: string) => {
       const tech = rules.getTechnology(id);
       return { technologyId: id, version: tech?.defaultVersion || "latest" };
     });
+    spinner1?.succeed(stepIndicator(1, 5, `${technologies.length} technologies resolved`));
 
-    // 2. Create and validate stack
+    // ── Step 2: Validate stack ──
+    const spinner2 = !opts.json
+      ? ora(stepIndicator(2, 5, "Validating stack compatibility")).start()
+      : null;
     const { stack, validation } = engine.create({
       name: projectName,
       description: "Generated by StackPilot",
@@ -346,23 +471,30 @@ export const generateCommand = new Command("generate")
     });
 
     if (!validation.valid) {
+      spinner2?.fail(stepIndicator(2, 5, "Validation failed"));
       if (opts.json) {
         console.log(JSON.stringify({ success: false, errors: validation.issues }, null, 2));
       } else {
-        console.error(chalk.red("Validation failed:"));
-        for (const i of validation.issues.filter((x) => x.severity === "error")) {
-          console.error(chalk.red(`  - ${i.message}`));
-        }
+        console.log("");
+        console.log(formatValidation(validation));
       }
       process.exit(1);
     }
+    spinner2?.succeed(stepIndicator(2, 5, "Stack is valid"));
 
-    // 3. Resolve all techs (including auto-added)
+    if (!opts.json && validation.issues.length > 0) {
+      for (const issue of validation.issues) {
+        if (issue.severity === "warning") {
+          console.log(`  ${warning(issue.message)}`);
+        }
+      }
+    }
+
+    // ── Step 3: Detect project type & scaffold ──
     const allTechObjects: Technology[] = stack.technologies
       .map((st) => rules.getTechnology(st.technologyId))
       .filter((t): t is Technology => t != null);
 
-    // 4. Detect project type
     const frontendTech = allTechObjects.find((t) => t.category === "frontend");
     const backendTech = allTechObjects.find((t) => t.category === "backend");
     const isFullStack = !!frontendTech && !!backendTech;
@@ -377,14 +509,12 @@ export const generateCommand = new Command("generate")
           ? "backend"
           : "library";
 
-    if (!opts.json) {
-      console.log(chalk.bold(`\nProject type: ${projectType}`));
-    }
+    const spinner3 = !opts.json
+      ? ora(stepIndicator(3, 5, `Generating ${projectType} project structure`)).start()
+      : null;
 
-    // 5. Create root directory
     fs.mkdirSync(targetDir, { recursive: true });
 
-    // 6. Generate shared scaffold files (compose, Makefile, README, etc.)
     const output = orchestrator.generate(stack);
     const written: string[] = [];
 
@@ -402,8 +532,6 @@ export const generateCommand = new Command("generate")
     if (output.dockerCompose) {
       rootFiles.unshift({ p: "docker-compose.yml", content: output.dockerCompose });
     }
-
-    // Root .env.example always has ALL variables for reference
     rootFiles.push({ p: ".env.example", content: output.envExample });
 
     for (const f of rootFiles) {
@@ -411,13 +539,17 @@ export const generateCommand = new Command("generate")
       if (f.p.endsWith(".sh")) makeExecutable(path.join(targetDir, f.p));
       written.push(f.p);
     }
+    spinner3?.succeed(stepIndicator(3, 5, `${written.length} root files generated`));
 
-    // 7. Scaffold sub-projects
+    // ── Step 4: Scaffold sub-projects ──
     const scaffoldLog: string[] = [];
+    const spinner4 = !opts.json
+      ? ora(stepIndicator(4, 5, "Scaffolding applications")).start()
+      : null;
 
     if (isFullStack) {
-      // ─── Full-stack: frontend/ + backend/ ───
-      if (!opts.json) console.log(chalk.cyan("\n  Scaffolding frontend..."));
+      if (spinner4)
+        spinner4.text = stepIndicator(4, 5, `Scaffolding ${frontendTech!.name} frontend...`);
       const fLog = scaffoldFrontend(
         frontendTech!,
         path.join(targetDir, "frontend"),
@@ -426,7 +558,8 @@ export const generateCommand = new Command("generate")
       );
       scaffoldLog.push(...fLog.map((l) => `frontend: ${l}`));
 
-      if (!opts.json) console.log(chalk.cyan("  Scaffolding backend..."));
+      if (spinner4)
+        spinner4.text = stepIndicator(4, 5, `Scaffolding ${backendTech!.name} backend...`);
       const bLog = scaffoldBackend(
         backendTech!,
         path.join(targetDir, "backend"),
@@ -436,14 +569,11 @@ export const generateCommand = new Command("generate")
       );
       scaffoldLog.push(...bLog.map((l) => `backend: ${l}`));
     } else if (isFrontendOnly) {
-      // ─── Frontend only: scaffold in root ───
       if (frontendTech!.officialScaffold) {
-        if (!opts.json) console.log(chalk.cyan(`\n  Scaffolding ${frontendTech!.name}...`));
-        // Scaffold creates files IN targetDir (we scaffold to a temp name then move)
+        if (spinner4) spinner4.text = stepIndicator(4, 5, `Scaffolding ${frontendTech!.name}...`);
         const tempName = ".scaffold-temp";
         const r = run(`${frontendTech!.officialScaffold} ${tempName}`, targetDir);
         if (r.success) {
-          // Move scaffolded files to root
           const tempDir = path.join(targetDir, tempName);
           if (fs.existsSync(tempDir)) {
             for (const item of fs.readdirSync(tempDir)) {
@@ -457,24 +587,24 @@ export const generateCommand = new Command("generate")
           }
           scaffoldLog.push(`${frontendTech!.name} scaffolded in project root`);
         } else {
-          scaffoldLog.push(`${frontendTech!.name} (run manually: ${frontendTech!.officialScaffold})`);
+          scaffoldLog.push(
+            `${frontendTech!.name} (run manually: ${frontendTech!.officialScaffold})`,
+          );
         }
       }
     } else if (isBackendOnly) {
-      // ─── Backend only: scaffold in root ───
-      if (!opts.json) console.log(chalk.cyan(`\n  Scaffolding ${backendTech!.name}...`));
-      const bLog = scaffoldBackend(
-        backendTech!,
-        targetDir,
-        targetDir,
-        projectName,
-        allTechObjects,
-      );
+      if (spinner4) spinner4.text = stepIndicator(4, 5, `Scaffolding ${backendTech!.name}...`);
+      const bLog = scaffoldBackend(backendTech!, targetDir, targetDir, projectName, allTechObjects);
       scaffoldLog.push(...bLog);
     }
 
-    // 8. Install all additional technologies (ORMs, auth, styling, devops)
-    if (!opts.json) console.log(chalk.cyan("\n  Installing technologies (ORM, Auth, Styling, DevOps)..."));
+    // Install additional technologies
+    if (spinner4)
+      spinner4.text = stepIndicator(
+        4,
+        5,
+        "Installing additional technologies (ORM, Auth, Styling, DevOps)...",
+      );
 
     const installCtx = {
       projectDir: targetDir,
@@ -483,7 +613,7 @@ export const generateCommand = new Command("generate")
       projectName,
       isFullStack,
       allTechs: allTechObjects,
-      runtime: allTechObjects.find((t) => t.category === "runtime")?.id as any ?? null,
+      runtime: (allTechObjects.find((t) => t.category === "runtime")?.id as any) ?? null,
     };
 
     const installResults = installTechnologies(installCtx);
@@ -491,17 +621,22 @@ export const generateCommand = new Command("generate")
       if (r.success) {
         scaffoldLog.push(`${r.techId}: ${r.message}`);
       } else {
-        scaffoldLog.push(`${r.techId}: FAILED — ${r.message}`);
+        scaffoldLog.push(`${r.techId}: FAILED \u2014 ${r.message}`);
       }
     }
+    spinner4?.succeed(stepIndicator(4, 5, `${scaffoldLog.length} scaffold operations completed`));
 
-    // 9. Git init
+    // ── Step 5: Git init ──
     if (opts.git) {
+      const spinner5 = !opts.json
+        ? ora(stepIndicator(5, 5, "Initializing git repository")).start()
+        : null;
       orchestrator.initGit(targetDir, stack);
       scaffoldLog.push("Git initialized with initial commit");
+      spinner5?.succeed(stepIndicator(5, 5, "Git repository initialized"));
     }
 
-    // 9. Output
+    // ── Output ──
     if (opts.json) {
       console.log(
         JSON.stringify(
@@ -524,19 +659,30 @@ export const generateCommand = new Command("generate")
         ),
       );
     } else {
-      console.log(chalk.green(`\n✓ Project "${projectName}" created at ${targetDir}\n`));
+      const summaryContent = [
+        `${chalk.dim("Project:")}  ${chalk.cyan.bold(projectName)}`,
+        `${chalk.dim("Type:")}     ${projectType}`,
+        `${chalk.dim("Path:")}     ${targetDir}`,
+        `${chalk.dim("Profile:")}  ${opts.profile || "standard"}`,
+        `${chalk.dim("Files:")}    ${written.length} root + ${scaffoldLog.length} scaffold ops`,
+        `${chalk.dim("Stack ID:")} ${chalk.dim(stack.id)}`,
+      ].join("\n");
 
-      console.log(chalk.bold("Root files:"));
-      for (const f of written) console.log(chalk.green(`  ${f}`));
+      console.log("");
+      console.log(box(summaryContent, "\u2714 Project Created"));
 
       if (scaffoldLog.length > 0) {
-        console.log(chalk.bold("\nScaffold:"));
-        for (const l of scaffoldLog) console.log(chalk.cyan(`  ${l}`));
+        console.log(chalk.bold("\n  Scaffold log:"));
+        for (const l of scaffoldLog) {
+          const isFailure = l.includes("FAILED");
+          const icon = isFailure ? chalk.red("\u2716") : chalk.green("\u2714");
+          console.log(`    ${icon} ${isFailure ? chalk.red(l) : chalk.dim(l)}`);
+        }
       }
 
-      console.log(chalk.bold("\nNext steps:"));
-      console.log(chalk.dim(`  cd ${targetDir}`));
-      if (output.dockerCompose) console.log(chalk.dim("  docker compose up -d"));
-      console.log(chalk.dim("  make dev"));
+      const steps = [`cd ${targetDir}`];
+      if (output.dockerCompose) steps.push("docker compose up -d");
+      steps.push("make dev");
+      console.log(nextSteps(steps));
     }
   });

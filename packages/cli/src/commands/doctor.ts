@@ -2,11 +2,18 @@
  * stackpilot doctor — Detect system capabilities and issues.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
 import { execSync } from "child_process";
+import { Command } from "commander";
 import * as os from "os";
-import { formatJson } from "../ui/format.js";
+import {
+  box,
+  formatJson,
+  formatToolCheck,
+  gradientHeader,
+  ICONS,
+  sectionHeader,
+} from "../ui/format.js";
 
 interface CheckResult {
   name: string;
@@ -15,13 +22,24 @@ interface CheckResult {
   message?: string;
 }
 
+const INSTALL_SUGGESTIONS: Record<string, string> = {
+  "Node.js": "https://nodejs.org  or  nvm install --lts",
+  npm: "Included with Node.js",
+  pnpm: "npm install -g pnpm",
+  Docker: "https://docs.docker.com/get-docker/",
+  "Docker Compose": "Included with Docker Desktop, or: apt install docker-compose-plugin",
+  Git: "apt install git  or  https://git-scm.com",
+  Python: "https://python.org  or  apt install python3",
+  Go: "https://go.dev/dl/  or  snap install go",
+  Rust: "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+  Cargo: "Included with Rust (rustup)",
+  Bun: "curl -fsSL https://bun.sh/install | bash",
+};
+
 function check(name: string, command: string): CheckResult {
   try {
-    const output = execSync(command, { stdio: "pipe", timeout: 5000 })
-      .toString()
-      .trim();
-    // Extract version-like string
-    const versionMatch = output.match(/(\d+\.\d+[\.\d]*)/);
+    const output = execSync(command, { stdio: "pipe", timeout: 5000 }).toString().trim();
+    const versionMatch = output.match(/(\d+\.\d+[.\d]*)/);
     return {
       name,
       status: "ok",
@@ -35,7 +53,6 @@ function check(name: string, command: string): CheckResult {
 export const doctorCommand = new Command("doctor")
   .description("Check system requirements and environment")
   .option("--json", "Output as JSON")
-  .option("--suggest", "Suggest fixes for issues")
   .action((opts) => {
     const results: CheckResult[] = [];
 
@@ -50,35 +67,32 @@ export const doctorCommand = new Command("doctor")
       hostname: os.hostname(),
     };
 
-    // Check runtimes
+    // Check runtimes & tools (including all required ones)
     results.push(check("Node.js", "node --version"));
     results.push(check("npm", "npm --version"));
     results.push(check("pnpm", "pnpm --version"));
+    results.push(check("Docker", "docker --version"));
+    results.push(check("Docker Compose", "docker compose version"));
+    results.push(check("Git", "git --version"));
     results.push(check("Python", "python3 --version"));
     results.push(check("Go", "go version"));
     results.push(check("Rust", "rustc --version"));
+    results.push(check("Cargo", "cargo --version"));
     results.push(check("Bun", "bun --version"));
-
-    // Check Docker
-    results.push(check("Docker", "docker --version"));
-    results.push(check("Docker Compose", "docker compose version"));
-
-    // Check Git
-    results.push(check("Git", "git --version"));
 
     // Check ports
     const portChecks: CheckResult[] = [];
     const commonPorts = [3000, 5432, 6379, 8000, 8080, 27017];
     for (const port of commonPorts) {
       try {
-        execSync(`lsof -i :${port} -sTCP:LISTEN 2>/dev/null || ss -tlnp 2>/dev/null | grep :${port}`, {
-          stdio: "pipe",
-          timeout: 2000,
-        });
+        execSync(
+          `lsof -i :${port} -sTCP:LISTEN 2>/dev/null || ss -tlnp 2>/dev/null | grep :${port}`,
+          { stdio: "pipe", timeout: 2000 },
+        );
         portChecks.push({
           name: `Port ${port}`,
           status: "warning",
-          message: `Port ${port} is in use`,
+          message: `in use`,
         });
       } catch {
         portChecks.push({ name: `Port ${port}`, status: "ok" });
@@ -88,9 +102,7 @@ export const doctorCommand = new Command("doctor")
     // Disk space
     let diskInfo: CheckResult;
     try {
-      const df = execSync("df -h . | tail -1", { stdio: "pipe" })
-        .toString()
-        .trim();
+      const df = execSync("df -h . | tail -1", { stdio: "pipe" }).toString().trim();
       const parts = df.split(/\s+/);
       diskInfo = {
         name: "Disk Space",
@@ -98,71 +110,80 @@ export const doctorCommand = new Command("doctor")
         version: `${parts[3]} available of ${parts[1]}`,
       };
     } catch {
-      diskInfo = { name: "Disk Space", status: "warning", message: "Could not check" };
+      diskInfo = {
+        name: "Disk Space",
+        status: "warning",
+        message: "Could not check",
+      };
     }
 
     if (opts.json) {
       console.log(
-        formatJson({ system: sysInfo, tools: results, ports: portChecks, disk: diskInfo }),
+        formatJson({
+          system: sysInfo,
+          tools: results,
+          ports: portChecks,
+          disk: diskInfo,
+        }),
       );
       return;
     }
 
-    // Output
-    console.log(chalk.bold("\nSystem:"));
-    console.log(
-      `  ${chalk.dim("OS:")} ${sysInfo.platform} ${sysInfo.arch} (${sysInfo.release})`,
-    );
-    console.log(`  ${chalk.dim("CPUs:")} ${sysInfo.cpus}`);
-    console.log(
-      `  ${chalk.dim("Memory:")} ${sysInfo.freeMemory} free / ${sysInfo.memory} total`,
-    );
-    console.log(`  ${chalk.dim("Disk:")} ${diskInfo.version || diskInfo.message}`);
+    // ── Output ──
+    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ System Doctor")}\n`);
 
-    console.log(chalk.bold("\nTools:"));
+    // System info box
+    const sysContent = [
+      `${chalk.dim("OS:")}      ${sysInfo.platform} ${sysInfo.arch} (${sysInfo.release})`,
+      `${chalk.dim("CPUs:")}    ${sysInfo.cpus}`,
+      `${chalk.dim("Memory:")}  ${sysInfo.freeMemory} free / ${sysInfo.memory} total`,
+      `${chalk.dim("Disk:")}    ${diskInfo.version || diskInfo.message}`,
+      `${chalk.dim("Host:")}    ${sysInfo.hostname}`,
+    ].join("\n");
+    console.log(box(sysContent, "System"));
+
+    // Tools
+    const found = results.filter((r) => r.status === "ok").length;
+    const missing = results.filter((r) => r.status === "not_found").length;
+    console.log(
+      sectionHeader(
+        `  Tools (${chalk.green(String(found) + " found")}, ${missing > 0 ? chalk.red(String(missing) + " missing") : chalk.dim("0 missing")})`,
+      ),
+    );
     for (const r of results) {
-      const icon =
-        r.status === "ok"
-          ? chalk.green("✓")
-          : r.status === "not_found"
-            ? chalk.red("✗")
-            : chalk.yellow("⚠");
-      const detail = r.version
-        ? chalk.dim(r.version)
-        : chalk.dim(r.message || "");
-      console.log(`  ${icon} ${r.name} ${detail}`);
-
-      if (opts.suggest && r.status === "not_found") {
-        const suggestions: Record<string, string> = {
-          "Docker": "Install Docker: https://docs.docker.com/get-docker/",
-          "Docker Compose": "Docker Compose is included with Docker Desktop",
-          "Python": "Install Python: https://python.org",
-          "Go": "Install Go: https://go.dev/dl/",
-          "Rust": "Install Rust: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
-          "Bun": "Install Bun: curl -fsSL https://bun.sh/install | bash",
-          "pnpm": "Install pnpm: npm install -g pnpm",
-        };
-        if (suggestions[r.name]) {
-          console.log(`    ${chalk.dim("→ " + suggestions[r.name])}`);
-        }
-      }
+      console.log(
+        formatToolCheck(r.name, r.status === "ok", r.version, INSTALL_SUGGESTIONS[r.name]),
+      );
     }
 
-    console.log(chalk.bold("\nPorts:"));
+    // Ports
+    const portsInUse = portChecks.filter((p) => p.status === "warning");
+    console.log(
+      sectionHeader(
+        `  Ports (${portsInUse.length > 0 ? chalk.yellow(String(portsInUse.length) + " in use") : chalk.green("all available")})`,
+      ),
+    );
     for (const p of portChecks) {
-      const icon =
-        p.status === "ok" ? chalk.green("✓") : chalk.yellow("⚠");
-      console.log(
-        `  ${icon} ${p.name} ${p.status === "warning" ? chalk.yellow(p.message!) : chalk.dim("available")}`,
-      );
+      const icon = p.status === "ok" ? chalk.green("\u2714") : chalk.yellow("\u26A0");
+      const statusText = p.status === "warning" ? chalk.yellow(p.message!) : chalk.dim("available");
+      console.log(`  ${icon} ${p.name} ${statusText}`);
     }
 
     // WSL detection
     if (sysInfo.release.includes("microsoft") || sysInfo.release.includes("WSL")) {
       console.log(
-        chalk.yellow("\n⚠ WSL detected. Docker Desktop for Windows integration recommended."),
+        `\n  ${ICONS.warning} ${chalk.yellow("WSL detected. Docker Desktop for Windows integration recommended.")}`,
       );
     }
 
-    console.log("");
+    // Summary
+    if (missing === 0) {
+      console.log(
+        `\n  ${chalk.green("\u2714")} ${chalk.green("All tools available. System is ready.")}\n`,
+      );
+    } else {
+      console.log(
+        `\n  ${chalk.yellow("\u26A0")} ${chalk.yellow(`${missing} tool(s) missing. Install them for full functionality.`)}\n`,
+      );
+    }
   });

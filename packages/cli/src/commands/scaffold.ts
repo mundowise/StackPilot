@@ -3,11 +3,11 @@
  * Generates docker-compose.yml, .env.example, README.md, .gitignore, devcontainer.json.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 import * as fs from "fs";
 import * as path from "path";
-import { getStackEngine, getScaffoldOrchestrator } from "../ui/context.js";
+import { getScaffoldOrchestrator, getStackEngine } from "../ui/context.js";
 
 export const scaffoldCommand = new Command("scaffold")
   .description("Generate project files from a saved stack")
@@ -58,6 +58,16 @@ export const scaffoldCommand = new Command("scaffold")
       content: output.ciWorkflow,
     });
 
+    // Create all required directories (including empty ones like src/, tests/)
+    for (const dir of output.directories) {
+      const dirPath = path.join(targetDir, dir);
+      if (opts.dryRun) {
+        console.log(chalk.dim(`[dry-run] ${dir}/`));
+      } else if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+    }
+
     for (const file of files) {
       const filePath = path.join(targetDir, file.path);
 
@@ -80,9 +90,7 @@ export const scaffoldCommand = new Command("scaffold")
 
     if (!opts.dryRun) {
       console.log("");
-      console.log(
-        chalk.green(`✓ Generated ${files.length} files for "${stack.name}"`),
-      );
+      console.log(chalk.green(`✓ Generated ${files.length} files for "${stack.name}"`));
 
       // Git init
       if (opts.git) {

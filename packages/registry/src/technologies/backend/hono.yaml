@@ -7,7 +7,7 @@ versions: [{version: "4"}]
 defaultVersion: "4"
 defaultPort: 3001
 requires: [nodejs]
-incompatibleWith: []
+incompatibleWith: [express, fastify, nestjs]
 suggestedWith: [typescript, bun]
 officialScaffold: npm create hono@latest
 dockerImage: null

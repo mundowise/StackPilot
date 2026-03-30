@@ -37,9 +37,17 @@ export class RulesEngine {
       }
     }
 
-    // 2. Check requires — resolve missing dependencies
-    for (const sel of selected) {
-      const tech = this.techMap.get(sel.technologyId);
+    // 2. Check requires — resolve missing dependencies RECURSIVELY
+    // Use a queue to process newly resolved dependencies until no more are needed
+    const toProcess = [...selectedIds];
+    const processed = new Set<string>();
+
+    while (toProcess.length > 0) {
+      const currentId = toProcess.shift()!;
+      if (processed.has(currentId)) continue;
+      processed.add(currentId);
+
+      const tech = this.techMap.get(currentId);
       if (!tech) continue;
 
       for (const reqId of tech.requires) {
@@ -48,11 +56,13 @@ export class RulesEngine {
           if (reqTech) {
             resolvedDependencies.push(reqId);
             selectedIds.add(reqId);
+            // Queue the newly added dependency so its own requires are checked
+            toProcess.push(reqId);
             issues.push({
               severity: "info",
               code: "AUTO_DEPENDENCY",
               message: `"${tech.name}" requires "${reqTech.name}" — added automatically`,
-              technologyId: sel.technologyId,
+              technologyId: currentId,
               relatedTechnologyId: reqId,
               autoFixable: true,
               suggestedFix: `Add ${reqTech.name} to the stack`,
@@ -62,7 +72,7 @@ export class RulesEngine {
               severity: "error",
               code: "MISSING_DEPENDENCY",
               message: `"${tech.name}" requires "${reqId}" which is not in the registry`,
-              technologyId: sel.technologyId,
+              technologyId: currentId,
               relatedTechnologyId: reqId,
               autoFixable: false,
             });
@@ -71,30 +81,46 @@ export class RulesEngine {
       }
     }
 
-    // 3. Check incompatibleWith
-    for (const sel of selected) {
-      const tech = this.techMap.get(sel.technologyId);
+    // 3. Check incompatibleWith BIDIRECTIONALLY
+    // Track reported pairs to avoid duplicate issues (A-B and B-A)
+    const reportedPairs = new Set<string>();
+    const allIds = [...selectedIds];
+
+    for (const techId of allIds) {
+      const tech = this.techMap.get(techId);
       if (!tech) continue;
 
-      for (const incompId of tech.incompatibleWith) {
-        if (selectedIds.has(incompId)) {
-          const incompTech = this.techMap.get(incompId);
+      for (const otherId of allIds) {
+        if (techId === otherId) continue;
+
+        const pairKey = [techId, otherId].sort().join(":");
+        if (reportedPairs.has(pairKey)) continue;
+
+        const otherTech = this.techMap.get(otherId);
+        if (!otherTech) continue;
+
+        // Bidirectional: incompatible if EITHER side lists the other
+        const aListsB = tech.incompatibleWith.includes(otherId);
+        const bListsA = otherTech.incompatibleWith.includes(techId);
+
+        if (aListsB || bListsA) {
+          reportedPairs.add(pairKey);
           issues.push({
             severity: "error",
             code: "INCOMPATIBLE",
-            message: `"${tech.name}" is incompatible with "${incompTech?.name || incompId}"`,
-            technologyId: sel.technologyId,
-            relatedTechnologyId: incompId,
+            message: `"${tech.name}" is incompatible with "${otherTech.name}"`,
+            technologyId: techId,
+            relatedTechnologyId: otherId,
             autoFixable: false,
-            suggestedFix: `Remove either ${tech.name} or ${incompTech?.name || incompId}`,
+            suggestedFix: `Remove either "${tech.name}" or "${otherTech.name}" from the stack`,
           });
         }
       }
     }
 
-    // 4. Assign ports — detect conflicts
-    const allTechIds = [...selectedIds];
-    for (const techId of allTechIds) {
+    // 4. Assign ports deterministically — sort by ID for stable ordering
+    const sortedTechIds = [...selectedIds].sort();
+    for (const techId of sortedTechIds) {
       const tech = this.techMap.get(techId);
       if (!tech || !tech.defaultPort) continue;
 

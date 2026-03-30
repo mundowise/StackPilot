@@ -4,61 +4,109 @@
  * StackPilot CLI — The operating system for your dev stacks.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
-import { initCommand } from "./commands/init.js";
-import { createCommand } from "./commands/create.js";
-import { listCommand } from "./commands/list.js";
-import { infoCommand } from "./commands/info.js";
-import { exportCommand } from "./commands/export-stack.js";
-import { importCommand } from "./commands/import-stack.js";
+import { Command } from "commander";
+import { aiCommand } from "./commands/ai.js";
 import { browseCommand } from "./commands/browse.js";
-import { doctorCommand } from "./commands/doctor.js";
-import { deleteCommand } from "./commands/delete.js";
-import { versionCommand } from "./commands/version-cmd.js";
-import { upCommand } from "./commands/up.js";
-import { downCommand } from "./commands/down.js";
-import { statusCommand } from "./commands/status.js";
-import { logsCommand } from "./commands/logs.js";
-import { scaffoldCommand } from "./commands/scaffold.js";
-import { saveCommand } from "./commands/save.js";
+import { cloneCommand } from "./commands/clone.js";
 import { completionCommand } from "./commands/completion.js";
 import { configCommand } from "./commands/config.js";
-import { aiCommand } from "./commands/ai.js";
-import { cloneCommand } from "./commands/clone.js";
-import { templateCommand } from "./commands/template.js";
+import { createCommand } from "./commands/create.js";
+import { deleteCommand } from "./commands/delete.js";
+import { doctorCommand } from "./commands/doctor.js";
+import { downCommand } from "./commands/down.js";
+import { exportCommand } from "./commands/export-stack.js";
 import { generateCommand } from "./commands/generate.js";
+import { importCommand } from "./commands/import-stack.js";
+import { infoCommand } from "./commands/info.js";
+import { initCommand } from "./commands/init.js";
+import { listCommand } from "./commands/list.js";
+import { logsCommand } from "./commands/logs.js";
+import { saveCommand } from "./commands/save.js";
+import { scaffoldCommand } from "./commands/scaffold.js";
+import { statusCommand } from "./commands/status.js";
+import { templateCommand } from "./commands/template.js";
+import { upCommand } from "./commands/up.js";
+import { versionCommand } from "./commands/version-cmd.js";
+import { banner } from "./ui/format.js";
+
+const VERSION = "0.1.0";
 
 const program = new Command();
 
 program
   .name("stackpilot")
   .description("The operating system for your dev stacks")
-  .version("0.1.0")
+  .version(VERSION, "-V, --version", "Show version number")
   .addCommand(initCommand)
   .addCommand(createCommand)
+  .addCommand(generateCommand)
   .addCommand(listCommand)
   .addCommand(infoCommand)
-  .addCommand(exportCommand)
-  .addCommand(importCommand)
   .addCommand(browseCommand)
   .addCommand(doctorCommand)
-  .addCommand(deleteCommand)
-  .addCommand(versionCommand)
   .addCommand(upCommand)
   .addCommand(downCommand)
   .addCommand(statusCommand)
   .addCommand(logsCommand)
   .addCommand(scaffoldCommand)
   .addCommand(saveCommand)
-  .addCommand(completionCommand)
-  .addCommand(configCommand)
-  .addCommand(aiCommand)
+  .addCommand(deleteCommand)
   .addCommand(cloneCommand)
+  .addCommand(exportCommand)
+  .addCommand(importCommand)
   .addCommand(templateCommand)
-  .addCommand(generateCommand);
+  .addCommand(configCommand)
+  .addCommand(completionCommand)
+  .addCommand(aiCommand)
+  .addCommand(versionCommand);
+
+// Show banner when run without arguments
+if (process.argv.length <= 2) {
+  console.log(banner(VERSION));
+  console.log(chalk.bold("  Commands:"));
+  console.log("");
+  console.log(chalk.cyan("    Setup"));
+  console.log(chalk.dim("      init            ") + "Create a new stack interactively");
+  console.log(chalk.dim("      generate        ") + "Scaffold a full project (one-shot)");
+  console.log(chalk.dim("      create          ") + "Scaffold from a stack or template");
+  console.log(chalk.dim("      doctor          ") + "Check system requirements");
+  console.log("");
+  console.log(chalk.cyan("    Stacks"));
+  console.log(chalk.dim("      list            ") + "List all saved stacks");
+  console.log(chalk.dim("      info <id>       ") + "Show stack or technology details");
+  console.log(chalk.dim("      browse          ") + "Browse technology catalog");
+  console.log(chalk.dim("      save            ") + "Save a version snapshot");
+  console.log(chalk.dim("      delete          ") + "Delete a saved stack");
+  console.log(chalk.dim("      clone           ") + "Duplicate a stack");
+  console.log(chalk.dim("      export/import   ") + "Export or import stack definitions");
+  console.log("");
+  console.log(chalk.cyan("    Runtime"));
+  console.log(chalk.dim("      up              ") + "Start Docker services");
+  console.log(chalk.dim("      down            ") + "Stop Docker services");
+  console.log(chalk.dim("      status          ") + "Show service status");
+  console.log(chalk.dim("      logs            ") + "Show service logs");
+  console.log("");
+  console.log(chalk.cyan("    Extras"));
+  console.log(chalk.dim("      ai suggest      ") + "AI-powered stack suggestions");
+  console.log(chalk.dim("      template        ") + "Manage templates");
+  console.log(chalk.dim("      config          ") + "Manage preferences");
+  console.log(chalk.dim("      completion      ") + "Generate shell completions");
+  console.log("");
+  console.log(chalk.dim(`  Run ${chalk.white("stackpilot <command> --help")} for detailed usage.`));
+  console.log("");
+  process.exit(0);
+}
 
 program.parseAsync(process.argv).catch((err) => {
-  console.error(chalk.red(err.message));
+  if (err && err.code === "commander.unknownCommand") {
+    const cmd = process.argv[2];
+    console.error(chalk.red(`\u2716 Unknown command: "${cmd}"`));
+    console.error(
+      chalk.dim(`  Run ${chalk.white("stackpilot --help")} to see available commands.`),
+    );
+    process.exit(1);
+  }
+  console.error(chalk.red(`\u2716 ${err instanceof Error ? err.message : String(err)}`));
   process.exit(1);
 });

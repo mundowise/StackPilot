@@ -9,7 +9,7 @@ versions:
 defaultVersion: "5"
 defaultPort: 5173
 requires: [nodejs]
-incompatibleWith: [qwik, solidjs]
+incompatibleWith: [react, vue, angular, qwik, solidjs]
 suggestedWith: [typescript, tailwindcss]
 officialScaffold: null
 dockerImage: null

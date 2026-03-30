@@ -2,11 +2,12 @@
  * stackpilot down — Stop Docker services.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 import ora from "ora";
 import * as path from "path";
 import { getRuntimeManager } from "../ui/context.js";
+import { error } from "../ui/format.js";
 
 export const downCommand = new Command("down")
   .description("Stop Docker services")
@@ -15,10 +16,16 @@ export const downCommand = new Command("down")
   .action((opts) => {
     const runtime = getRuntimeManager();
     const projectDir = path.resolve(opts.path);
-    const composePath = runtime.composeExists(projectDir);
 
+    if (!runtime.isDockerAvailable()) {
+      console.error(error("Docker is not available."));
+      console.error(chalk.dim("  Install Docker: https://docs.docker.com/get-docker/"));
+      process.exit(1);
+    }
+
+    const composePath = runtime.composeExists(projectDir);
     if (!composePath) {
-      console.error(chalk.red("No docker-compose.yml found in " + projectDir));
+      console.error(error("No docker-compose.yml found in " + projectDir));
       process.exit(1);
     }
 
@@ -26,7 +33,7 @@ export const downCommand = new Command("down")
     const result = runtime.down({ composePath, projectDir }, opts.volumes);
 
     if (result.success) {
-      spinner.succeed("Services stopped");
+      spinner.succeed(opts.volumes ? "Services stopped and volumes removed" : "Services stopped");
     } else {
       spinner.fail("Failed to stop services");
       console.error(chalk.dim(result.output.slice(0, 300)));

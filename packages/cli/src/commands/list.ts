@@ -2,10 +2,10 @@
  * stackpilot list — List saved stacks.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
-import { formatStackRow, formatJson } from "../ui/format.js";
+import { emptyState, formatJson, formatStackTable } from "../ui/format.js";
 
 export const listCommand = new Command("list")
   .aliases(["ls"])
@@ -16,7 +16,7 @@ export const listCommand = new Command("list")
     const stacks = engine.list();
 
     if (stacks.length === 0) {
-      console.log(chalk.dim("No stacks found. Run `stackpilot init` to create one."));
+      console.log(emptyState("No stacks saved yet.", "Run `stackpilot init` to create one."));
       return;
     }
 
@@ -25,9 +25,7 @@ export const listCommand = new Command("list")
       return;
     }
 
-    console.log(chalk.bold(`${stacks.length} stack(s):\n`));
-    for (const stack of stacks) {
-      console.log(formatStackRow(stack));
-      console.log("");
-    }
+    console.log(chalk.bold(`\n  ${stacks.length} stack(s)\n`));
+    console.log(formatStackTable(stacks));
+    console.log("");
   });

@@ -2,11 +2,12 @@
  * stackpilot up — Start Docker services for the current project.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
+import { Command } from "commander";
 import ora from "ora";
 import * as path from "path";
 import { getRuntimeManager } from "../ui/context.js";
+import { error, formatServiceStatus } from "../ui/format.js";
 
 export const upCommand = new Command("up")
   .description("Start Docker services")
@@ -18,14 +19,16 @@ export const upCommand = new Command("up")
     const projectDir = path.resolve(opts.path);
 
     if (!runtime.isDockerAvailable()) {
-      console.error(chalk.red("Docker is not available. Run `stackpilot doctor` to check."));
+      console.error(error("Docker is not available."));
+      console.error(chalk.dim("  Install Docker: https://docs.docker.com/get-docker/"));
+      console.error(chalk.dim("  Run `stackpilot doctor` to check your environment."));
       process.exit(1);
     }
 
     const composePath = runtime.composeExists(projectDir);
     if (!composePath) {
-      console.error(chalk.red("No docker-compose.yml found in " + projectDir));
-      console.log(chalk.dim("Run `stackpilot scaffold` to generate one from a stack."));
+      console.error(error("No docker-compose.yml found in " + projectDir));
+      console.error(chalk.dim("  Run `stackpilot scaffold` to generate one from a stack."));
       process.exit(1);
     }
 
@@ -53,16 +56,8 @@ export const upCommand = new Command("up")
         waitSpinner.warn("Some services may not be healthy yet");
       }
 
-      // Show status
-      for (const svc of health.services) {
-        const icon =
-          svc.status === "healthy" || svc.status === "running"
-            ? chalk.green("●")
-            : svc.status === "exited"
-              ? chalk.red("●")
-              : chalk.yellow("●");
-        const port = svc.port ? chalk.dim(`:${svc.port}`) : "";
-        console.log(`  ${icon} ${svc.name}${port} ${chalk.dim(svc.status)}`);
-      }
+      console.log("");
+      console.log(formatServiceStatus(health.services));
+      console.log("");
     }
   });

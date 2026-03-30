@@ -2,12 +2,18 @@
  * stackpilot browse — Browse the technology catalog and templates.
  */
 
-import { Command } from "commander";
-import chalk from "chalk";
 import { select } from "@inquirer/prompts";
-import { getRulesEngine } from "../ui/context.js";
-import { formatTechnology, formatTemplate, formatJson } from "../ui/format.js";
 import { getAllTemplates } from "@stackpilot/templates";
+import chalk from "chalk";
+import { Command } from "commander";
+import { getRulesEngine } from "../ui/context.js";
+import {
+  emptyState,
+  formatJson,
+  formatTechTable,
+  formatTemplate,
+  sectionHeader,
+} from "../ui/format.js";
 
 export const browseCommand = new Command("browse")
   .description("Browse the technology catalog and templates")
@@ -23,7 +29,11 @@ export const browseCommand = new Command("browse")
         console.log(formatJson(templates));
         return;
       }
-      console.log(chalk.bold(`${templates.length} template(s):\n`));
+      if (templates.length === 0) {
+        console.log(emptyState("No templates available."));
+        return;
+      }
+      console.log(chalk.bold(`\n  ${templates.length} template(s)\n`));
       for (const t of templates) {
         console.log(formatTemplate(t));
         console.log("");
@@ -43,19 +53,25 @@ export const browseCommand = new Command("browse")
       "devops",
     ] as const;
 
-    const category = opts.category || await select({
-      message: "Browse by category:",
-      choices: [
-        { name: "All technologies", value: "all" },
-        ...categories.map((c) => ({ name: c, value: c })),
-        { name: "Templates", value: "templates" },
-      ],
-    });
+    const category =
+      opts.category ||
+      (await select({
+        message: "Browse by category:",
+        choices: [
+          { name: "All technologies", value: "all" },
+          ...categories.map((c) => ({ name: c, value: c })),
+          { name: "Templates", value: "templates" },
+        ],
+      }));
 
     if (category === "templates") {
       const templates = getAllTemplates();
       if (opts.json) {
         console.log(formatJson(templates));
+        return;
+      }
+      if (templates.length === 0) {
+        console.log(emptyState("No templates available."));
         return;
       }
       for (const t of templates) {
@@ -65,10 +81,28 @@ export const browseCommand = new Command("browse")
       return;
     }
 
-    const techs =
-      category === "all"
-        ? rules.getAllTechnologies()
-        : rules.getByCategory(category);
+    if (category === "all") {
+      // Show all technologies grouped by category
+      const allTechs = rules.getAllTechnologies();
+      if (opts.json) {
+        console.log(formatJson(allTechs));
+        return;
+      }
+
+      console.log(chalk.bold(`\n  ${allTechs.length} technologies in catalog\n`));
+
+      for (const cat of categories) {
+        const techs = rules.getByCategory(cat);
+        if (techs.length === 0) continue;
+
+        console.log(sectionHeader(`  ${cat.toUpperCase()} (${techs.length})`));
+        console.log(formatTechTable(techs));
+        console.log("");
+      }
+      return;
+    }
+
+    const techs = rules.getByCategory(category);
 
     if (opts.json) {
       console.log(formatJson(techs));
@@ -76,13 +110,11 @@ export const browseCommand = new Command("browse")
     }
 
     if (techs.length === 0) {
-      console.log(chalk.dim("No technologies in this category."));
+      console.log(emptyState("No technologies in this category."));
       return;
     }
 
-    console.log(chalk.bold(`\n${techs.length} technology(ies):\n`));
-    for (const tech of techs) {
-      console.log(formatTechnology(tech));
-      console.log("");
-    }
+    console.log(chalk.bold(`\n  ${techs.length} ${category} technology(ies)\n`));
+    console.log(formatTechTable(techs));
+    console.log("");
   });

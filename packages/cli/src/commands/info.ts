@@ -2,14 +2,10 @@
  * stackpilot info <id> — Show detailed information about a stack or technology.
  */
 
-import { Command } from "commander";
 import chalk from "chalk";
-import { getStackEngine, getRulesEngine } from "../ui/context.js";
-import {
-  formatStackRow,
-  formatTechnology,
-  formatJson,
-} from "../ui/format.js";
+import { Command } from "commander";
+import { getRulesEngine, getStackEngine } from "../ui/context.js";
+import { formatJson, formatStackRow, formatTechnology } from "../ui/format.js";
 
 export const infoCommand = new Command("info")
   .description("Show details about a stack or technology")
@@ -32,7 +28,9 @@ export const infoCommand = new Command("info")
         for (const t of stack.technologies) {
           const tech = rules.getTechnology(t.technologyId);
           if (tech) {
-            console.log(`  ${chalk.cyan(tech.name)} ${chalk.dim("v" + t.version)} ${t.port ? chalk.dim(":" + t.port) : ""}`);
+            console.log(
+              `  ${chalk.cyan(tech.name)} ${chalk.dim("v" + t.version)} ${t.port ? chalk.dim(":" + t.port) : ""}`,
+            );
           }
         }
 
@@ -41,9 +39,7 @@ export const infoCommand = new Command("info")
         if (history.length > 1) {
           console.log(chalk.bold("\nVersion history:"));
           for (const v of history.slice(0, 5)) {
-            console.log(
-              `  ${chalk.dim("v" + v.version)} ${chalk.dim(v.timestamp)} ${v.changelog}`,
-            );
+            console.log(`  ${chalk.dim("v" + v.version)} ${chalk.dim(v.timestamp)} ${v.changelog}`);
           }
         }
       }

@@ -23,6 +23,7 @@ export interface ScaffoldOutput {
   vscodeSettings: string;
   ciWorkflow: string;
   scaffoldCommands: Array<{ name: string; command: string }>;
+  directories: string[];
 }
 
 export class ScaffoldOrchestrator {
@@ -56,6 +57,7 @@ export class ScaffoldOrchestrator {
       vscodeSettings: this.generateVscodeSettings(techs),
       ciWorkflow: this.generateCiWorkflow(stack, techs),
       scaffoldCommands: this.getScaffoldCommands(stack, techs),
+      directories: this.getRequiredDirectories(techs),
     };
   }
 
@@ -94,7 +96,7 @@ export class ScaffoldOrchestrator {
       if (envVars.length > 0) {
         lines.push("    environment:");
         for (const [key, value] of envVars) {
-          lines.push(`      ${key}: ${value}`);
+          lines.push(`      ${key}: "${value}"`);
         }
       }
 
@@ -192,14 +194,15 @@ export class ScaffoldOrchestrator {
       "",
       "## Stack",
       "",
-      "| Technology | Version | Category |",
-      "|------------|---------|----------|",
+      "| Technology | Version | Category | Port |",
+      "|------------|---------|----------|------|",
     ];
 
     for (const st of stack.technologies) {
       const tech = this.technologies.get(st.technologyId);
       if (tech) {
-        lines.push(`| ${tech.name} | ${st.version} | ${tech.category} |`);
+        const port = st.port ?? tech.defaultPort ?? "—";
+        lines.push(`| ${tech.name} | ${st.version} | ${tech.category} | ${port} |`);
       }
     }
 
@@ -242,13 +245,22 @@ export class ScaffoldOrchestrator {
   generateGitignore(techs: Technology[]): string {
     const patterns = new Set<string>();
 
-    // Always include
+    // Always include — universal patterns
     patterns.add("node_modules/");
     patterns.add(".env");
     patterns.add(".env.local");
+    patterns.add(".env.*.local");
     patterns.add("dist/");
+    patterns.add("build/");
     patterns.add(".DS_Store");
+    patterns.add("Thumbs.db");
     patterns.add("*.log");
+    patterns.add("*.pid");
+    patterns.add("*.seed");
+    patterns.add("coverage/");
+    patterns.add(".cache/");
+    patterns.add("tmp/");
+    patterns.add(".tmp/");
 
     for (const tech of techs) {
       switch (tech.category) {
@@ -258,21 +270,37 @@ export class ScaffoldOrchestrator {
             patterns.add(".next/");
             patterns.add(".nuxt/");
             patterns.add(".output/");
+            patterns.add(".turbo/");
+            patterns.add(".vercel/");
+            patterns.add(".npm/");
+            patterns.add("*.tsbuildinfo");
+          }
+          if (tech.id === "bun") {
+            patterns.add("bun.lockb");
           }
           if (tech.id === "python") {
             patterns.add("__pycache__/");
             patterns.add("*.pyc");
+            patterns.add("*.pyo");
             patterns.add(".venv/");
             patterns.add("venv/");
             patterns.add("*.egg-info/");
+            patterns.add(".mypy_cache/");
+            patterns.add(".ruff_cache/");
+            patterns.add(".pytest_cache/");
+            patterns.add("htmlcov/");
           }
           if (tech.id === "go") {
             patterns.add("/vendor/");
             patterns.add("*.exe");
+            patterns.add("bin/");
           }
           if (tech.id === "rust") {
             patterns.add("target/");
             patterns.add("Cargo.lock");
+          }
+          if (tech.id === "deno") {
+            patterns.add(".deno/");
           }
           break;
         case "database":
@@ -283,6 +311,31 @@ export class ScaffoldOrchestrator {
         case "devops":
           if (tech.id === "docker") {
             patterns.add(".docker/");
+          }
+          if (tech.id === "storybook") {
+            patterns.add("storybook-static/");
+          }
+          break;
+        case "frontend":
+          if (tech.id === "nextjs") {
+            patterns.add(".next/");
+            patterns.add("out/");
+          }
+          if (tech.id === "nuxt") {
+            patterns.add(".nuxt/");
+            patterns.add(".output/");
+          }
+          if (tech.id === "astro") {
+            patterns.add(".astro/");
+          }
+          if (tech.id === "sveltekit") {
+            patterns.add(".svelte-kit/");
+          }
+          break;
+        case "orm":
+          if (tech.id === "prisma") {
+            patterns.add("prisma/*.db");
+            patterns.add("prisma/*.db-journal");
           }
           break;
       }
@@ -874,6 +927,45 @@ export class ScaffoldOrchestrator {
     }
 
     return lines.join("\n");
+  }
+
+  /**
+   * Determine all directories that should be created during scaffolding.
+   * Ensures frontend/, backend/, scripts/, .vscode/, .devcontainer/,
+   * .github/workflows/, src/, and tests/ directories are included as needed.
+   */
+  getRequiredDirectories(techs: Technology[]): string[] {
+    const dirs = new Set<string>();
+
+    // Always create these
+    dirs.add("scripts");
+    dirs.add(".vscode");
+    dirs.add(".devcontainer");
+    dirs.add(".github/workflows");
+
+    const hasFrontend = techs.some((t) => t.category === "frontend");
+    const hasBackend = techs.some((t) => t.category === "backend");
+    const isFullStack = hasFrontend && hasBackend;
+
+    if (isFullStack) {
+      // Full-stack layout: frontend/ and backend/ directories
+      dirs.add("frontend");
+      dirs.add("frontend/src");
+      dirs.add("frontend/tests");
+      dirs.add("backend");
+      dirs.add("backend/src");
+      dirs.add("backend/tests");
+    } else {
+      // Single-app layout: src/ and tests/ at root
+      dirs.add("src");
+      dirs.add("tests");
+
+      if (hasFrontend) {
+        dirs.add("public");
+      }
+    }
+
+    return [...dirs].sort();
   }
 
   // ─── Private helpers ───────────────────────────────
