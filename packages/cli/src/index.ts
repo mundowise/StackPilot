@@ -7,6 +7,7 @@
 import chalk from "chalk";
 import { Command } from "commander";
 import { aiCommand } from "./commands/ai.js";
+import { analyzeCommand } from "./commands/analyze.js";
 import { browseCommand } from "./commands/browse.js";
 import { cloneCommand } from "./commands/clone.js";
 import { completionCommand } from "./commands/completion.js";
@@ -15,6 +16,7 @@ import { createCommand } from "./commands/create.js";
 import { deleteCommand } from "./commands/delete.js";
 import { doctorCommand } from "./commands/doctor.js";
 import { downCommand } from "./commands/down.js";
+import { envCommand } from "./commands/env.js";
 import { exportCommand } from "./commands/export-stack.js";
 import { generateCommand } from "./commands/generate.js";
 import { importCommand } from "./commands/import-stack.js";
@@ -24,6 +26,7 @@ import { listCommand } from "./commands/list.js";
 import { logsCommand } from "./commands/logs.js";
 import { saveCommand } from "./commands/save.js";
 import { scaffoldCommand } from "./commands/scaffold.js";
+import { scoreCommand } from "./commands/score.js";
 import { statusCommand } from "./commands/status.js";
 import { templateCommand } from "./commands/template.js";
 import { upCommand } from "./commands/up.js";
@@ -59,6 +62,9 @@ program
   .addCommand(configCommand)
   .addCommand(completionCommand)
   .addCommand(aiCommand)
+  .addCommand(scoreCommand)
+  .addCommand(analyzeCommand)
+  .addCommand(envCommand)
   .addCommand(versionCommand);
 
 // Show banner when run without arguments
@@ -86,6 +92,11 @@ if (process.argv.length <= 2) {
   console.log(chalk.dim("      down            ") + "Stop Docker services");
   console.log(chalk.dim("      status          ") + "Show service status");
   console.log(chalk.dim("      logs            ") + "Show service logs");
+  console.log("");
+  console.log(chalk.cyan("    Analysis"));
+  console.log(chalk.dim("      analyze [path]  ") + "Detect project stack automatically");
+  console.log(chalk.dim("      env [sync|check]") + " Sync .env files and check for issues");
+  console.log(chalk.dim("      score <a> [b]   ") + "Compatibility score between technologies");
   console.log("");
   console.log(chalk.cyan("    Extras"));
   console.log(chalk.dim("      ai suggest      ") + "AI-powered stack suggestions");
