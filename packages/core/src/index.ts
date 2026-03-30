@@ -19,6 +19,16 @@ export {
 export type { UserPreferences } from "./engine/preferences.js";
 export { installTechnologies } from "./engine/tech-installer.js";
 export type { InstallContext, InstallResult } from "./engine/tech-installer.js";
+export { scoreCompatibility, scoreStack } from "./engine/compatibility-scorer.js";
+export type {
+  CompatibilityResult,
+  CompatibilityFactor,
+  StackScoreResult,
+} from "./engine/compatibility-scorer.js";
+export { parseEnvFile, syncEnv, checkDangerous } from "./engine/env-analyzer.js";
+export type { EnvVar, EnvSyncResult, EnvDangerousVar } from "./engine/env-analyzer.js";
+export { detectStack } from "./engine/stack-detector.js";
+export type { DetectedStack, DetectedTech } from "./engine/stack-detector.js";
 
 // Database
 export { getDatabase, closeDatabase, getDefaultDbPath } from "./db/database.js";
