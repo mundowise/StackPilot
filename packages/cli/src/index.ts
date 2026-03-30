@@ -35,6 +35,10 @@ import { healthCommand } from "./commands/health.js";
 import { previewCommand } from "./commands/preview.js";
 import { shareCommand, importUrlCommand } from "./commands/share.js";
 import { versionCommand } from "./commands/version-cmd.js";
+import { migrateCommand } from "./commands/migrate.js";
+import { learnCommand } from "./commands/learn.js";
+import { deployCommand } from "./commands/deploy.js";
+import { lintCommand } from "./commands/lint.js";
 import { banner } from "./ui/format.js";
 
 const VERSION = "0.1.0";
@@ -74,6 +78,10 @@ program
   .addCommand(importUrlCommand)
   .addCommand(healthCommand)
   .addCommand(compareCommand)
+  .addCommand(migrateCommand)
+  .addCommand(learnCommand)
+  .addCommand(deployCommand)
+  .addCommand(lintCommand)
   .addCommand(versionCommand);
 
 // Show banner when run without arguments
@@ -111,6 +119,14 @@ if (process.argv.length <= 2) {
   console.log(chalk.dim("      compare <a> <b> ") + "Compare two saved stacks");
   console.log(chalk.dim("      env [sync|check]") + " Sync .env files and check for issues");
   console.log(chalk.dim("      score <a> [b]   ") + "Compatibility score between technologies");
+  console.log("");
+  console.log(chalk.cyan("    Deploy & Standards"));
+  console.log(chalk.dim("      deploy <id>     ") + "Generate infrastructure files (VPS/AWS/GCP)");
+  console.log(chalk.dim("      lint            ") + "Validate stack against team standards");
+  console.log("");
+  console.log(chalk.cyan("    Migration & Learning"));
+  console.log(chalk.dim("      migrate         ") + "Generate a migration plan between techs");
+  console.log(chalk.dim("      learn <tech>    ") + "Show learning resources for a technology");
   console.log("");
   console.log(chalk.cyan("    Extras"));
   console.log(chalk.dim("      ai suggest      ") + "AI-powered stack suggestions");
