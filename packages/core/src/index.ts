@@ -42,6 +42,17 @@ export { checkProjectHealth } from "./engine/health-checker.js";
 export type { HealthReport, HealthCheck } from "./engine/health-checker.js";
 export { diffStacks } from "./engine/stack-differ.js";
 export type { StackDiff, DiffItem, DiffChange } from "./engine/stack-differ.js";
+export { planMigration } from "./engine/migration-planner.js";
+export type { MigrationPlan, MigrationStep } from "./engine/migration-planner.js";
+export { generateInfra } from "./engine/infra-generator.js";
+export type { DeployTarget, InfraOutput } from "./engine/infra-generator.js";
+export { lintStack, loadStandards } from "./engine/standards-linter.js";
+export type {
+  StackStandards,
+  LintResult,
+  LintViolation,
+  LintWarning,
+} from "./engine/standards-linter.js";
 
 // Database
 export { getDatabase, closeDatabase, getDefaultDbPath } from "./db/database.js";
