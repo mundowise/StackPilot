@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a bug in StackPilot
+about: Report a bug in Forgeboard
 title: '[Bug] '
 labels: bug
 assignees: ''
@@ -23,7 +23,7 @@ A clear description of the bug.
 ## Environment
 - OS:
 - Node.js version:
-- StackPilot version:
+- Forgeboard version:
 - Desktop or CLI:
 
 ## Screenshots / Logs

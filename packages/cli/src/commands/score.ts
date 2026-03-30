@@ -1,11 +1,11 @@
 /**
- * stackpilot score <techA> [techB] — Show compatibility score between technologies.
+ * forgeboard score <techA> [techB] — Show compatibility score between technologies.
  *
  * Two techs: detailed compatibility report.
  * One tech: top 5 best and top 3 worst pairings from the catalog.
  */
 
-import { scoreCompatibility } from "@stackpilot/core";
+import { scoreCompatibility } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine } from "../ui/context.js";

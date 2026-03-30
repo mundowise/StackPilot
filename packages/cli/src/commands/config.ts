@@ -1,15 +1,15 @@
 /**
- * stackpilot config — Manage user preferences.
+ * forgeboard config — Manage user preferences.
  */
 
-import type { UserPreferences } from "@stackpilot/core";
+import type { UserPreferences } from "@forgeboard/core";
 import {
   getDefaultPreferences,
   getPreferenceKeys,
   getPreferences,
   resetPreferences,
   setPreference,
-} from "@stackpilot/core";
+} from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { formatJson } from "../ui/format.js";

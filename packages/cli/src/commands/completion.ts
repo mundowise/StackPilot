@@ -1,12 +1,12 @@
 /**
- * stackpilot completion — Generate shell completions.
+ * forgeboard completion — Generate shell completions.
  */
 
 import { Command } from "commander";
 
 const BASH_COMPLETION = `
-# stackpilot bash completion
-_stackpilot_completions() {
+# forgeboard bash completion
+_forgeboard_completions() {
   local cur="\${COMP_WORDS[COMP_CWORD]}"
   local commands="init create list info save export import browse doctor delete version up down status logs scaffold completion"
 
@@ -14,13 +14,13 @@ _stackpilot_completions() {
     COMPREPLY=( $(compgen -W "\${commands}" -- "\${cur}") )
   fi
 }
-complete -F _stackpilot_completions stackpilot
+complete -F _forgeboard_completions forgeboard
 `.trim();
 
 const ZSH_COMPLETION = `
-#compdef stackpilot
+#compdef forgeboard
 
-_stackpilot() {
+_forgeboard() {
   local -a commands
   commands=(
     'init:Create a new stack interactively'
@@ -45,28 +45,28 @@ _stackpilot() {
   _describe 'command' commands
 }
 
-_stackpilot
+_forgeboard
 `.trim();
 
 const FISH_COMPLETION = `
-# stackpilot fish completions
-complete -c stackpilot -n "__fish_use_subcommand" -a init -d "Create a new stack interactively"
-complete -c stackpilot -n "__fish_use_subcommand" -a create -d "Scaffold a project"
-complete -c stackpilot -n "__fish_use_subcommand" -a list -d "List all saved stacks"
-complete -c stackpilot -n "__fish_use_subcommand" -a info -d "Show details about a stack or technology"
-complete -c stackpilot -n "__fish_use_subcommand" -a save -d "Save a version snapshot"
-complete -c stackpilot -n "__fish_use_subcommand" -a export -d "Export a stack definition"
-complete -c stackpilot -n "__fish_use_subcommand" -a import -d "Import a stack definition"
-complete -c stackpilot -n "__fish_use_subcommand" -a browse -d "Browse the technology catalog"
-complete -c stackpilot -n "__fish_use_subcommand" -a doctor -d "Check system requirements"
-complete -c stackpilot -n "__fish_use_subcommand" -a delete -d "Delete a saved stack"
-complete -c stackpilot -n "__fish_use_subcommand" -a version -d "Manage stack versions"
-complete -c stackpilot -n "__fish_use_subcommand" -a up -d "Start Docker services"
-complete -c stackpilot -n "__fish_use_subcommand" -a down -d "Stop Docker services"
-complete -c stackpilot -n "__fish_use_subcommand" -a status -d "Show status of running services"
-complete -c stackpilot -n "__fish_use_subcommand" -a logs -d "Show logs from Docker services"
-complete -c stackpilot -n "__fish_use_subcommand" -a scaffold -d "Generate project files"
-complete -c stackpilot -n "__fish_use_subcommand" -a completion -d "Generate shell completions"
+# forgeboard fish completions
+complete -c forgeboard -n "__fish_use_subcommand" -a init -d "Create a new stack interactively"
+complete -c forgeboard -n "__fish_use_subcommand" -a create -d "Scaffold a project"
+complete -c forgeboard -n "__fish_use_subcommand" -a list -d "List all saved stacks"
+complete -c forgeboard -n "__fish_use_subcommand" -a info -d "Show details about a stack or technology"
+complete -c forgeboard -n "__fish_use_subcommand" -a save -d "Save a version snapshot"
+complete -c forgeboard -n "__fish_use_subcommand" -a export -d "Export a stack definition"
+complete -c forgeboard -n "__fish_use_subcommand" -a import -d "Import a stack definition"
+complete -c forgeboard -n "__fish_use_subcommand" -a browse -d "Browse the technology catalog"
+complete -c forgeboard -n "__fish_use_subcommand" -a doctor -d "Check system requirements"
+complete -c forgeboard -n "__fish_use_subcommand" -a delete -d "Delete a saved stack"
+complete -c forgeboard -n "__fish_use_subcommand" -a version -d "Manage stack versions"
+complete -c forgeboard -n "__fish_use_subcommand" -a up -d "Start Docker services"
+complete -c forgeboard -n "__fish_use_subcommand" -a down -d "Stop Docker services"
+complete -c forgeboard -n "__fish_use_subcommand" -a status -d "Show status of running services"
+complete -c forgeboard -n "__fish_use_subcommand" -a logs -d "Show logs from Docker services"
+complete -c forgeboard -n "__fish_use_subcommand" -a scaffold -d "Generate project files"
+complete -c forgeboard -n "__fish_use_subcommand" -a completion -d "Generate shell completions"
 `.trim();
 
 export const completionCommand = new Command("completion")

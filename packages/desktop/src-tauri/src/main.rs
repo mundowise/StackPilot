@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    stackpilot_desktop_lib::run()
+    forgeboard_desktop_lib::run()
 }

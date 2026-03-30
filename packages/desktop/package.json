@@ -1,5 +1,5 @@
 {
-  "name": "@stackpilot/desktop",
+  "name": "@forgeboard/desktop",
   "version": "0.1.0",
   "private": true,
   "type": "module",

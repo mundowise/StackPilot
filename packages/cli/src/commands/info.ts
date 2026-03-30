@@ -1,5 +1,5 @@
 /**
- * stackpilot info <id> — Show detailed information about a stack or technology.
+ * forgeboard info <id> — Show detailed information about a stack or technology.
  */
 
 import chalk from "chalk";

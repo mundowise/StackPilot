@@ -1,10 +1,10 @@
 /**
- * stackpilot analyze [path] — Detect the technology stack of a project.
+ * forgeboard analyze [path] — Detect the technology stack of a project.
  */
 
 import * as path from "node:path";
-import type { DetectedTech } from "@stackpilot/core";
-import { detectStack } from "@stackpilot/core";
+import type { DetectedTech } from "@forgeboard/core";
+import { detectStack } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";

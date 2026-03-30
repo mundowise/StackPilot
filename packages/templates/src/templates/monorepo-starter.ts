@@ -1,4 +1,4 @@
-import type { Template } from "@stackpilot/core";
+import type { Template } from "@forgeboard/core";
 
 export const monorepoStarter: Template = {
   id: "monorepo-starter",

@@ -1,8 +1,8 @@
 /**
- * stackpilot migrate --from <techId> --to <techId> — Generate a migration plan between technologies.
+ * forgeboard migrate --from <techId> --to <techId> — Generate a migration plan between technologies.
  */
 
-import { planMigration } from "@stackpilot/core";
+import { planMigration } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine } from "../ui/context.js";

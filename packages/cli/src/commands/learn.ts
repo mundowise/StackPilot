@@ -1,9 +1,9 @@
 /**
- * stackpilot learn <technology> — Show learning resources for a technology.
+ * forgeboard learn <technology> — Show learning resources for a technology.
  */
 
-import type { LearningResource } from "@stackpilot/registry";
-import { getLearningResources } from "@stackpilot/registry";
+import type { LearningResource } from "@forgeboard/registry";
+import { getLearningResources } from "@forgeboard/registry";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine } from "../ui/context.js";

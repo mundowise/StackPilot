@@ -1,5 +1,5 @@
 /**
- * stackpilot save — Save the current stack state (creates version snapshot).
+ * forgeboard save — Save the current stack state (creates version snapshot).
  */
 
 import { input } from "@inquirer/prompts";

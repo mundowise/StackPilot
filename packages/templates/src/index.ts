@@ -1,10 +1,10 @@
 /**
- * @stackpilot/templates — Built-in template registry.
+ * @forgeboard/templates — Built-in template registry.
  * Each template is a preconfigured stack recipe with scaffold steps,
  * file overrides, and lifecycle hooks.
  */
 
-import type { Template } from "@stackpilot/core";
+import type { Template } from "@forgeboard/core";
 import { astroLanding } from "./templates/astro-landing.js";
 import { djangoReact } from "./templates/django-react.js";
 import { djangoRestApi } from "./templates/django-rest-api.js";

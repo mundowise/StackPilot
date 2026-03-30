@@ -1,8 +1,8 @@
 /**
- * stackpilot compare <stackA> <stackB> — Compare two saved stacks side by side.
+ * forgeboard compare <stackA> <stackB> — Compare two saved stacks side by side.
  */
 
-import { diffStacks } from "@stackpilot/core";
+import { diffStacks } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getStackEngine } from "../ui/context.js";
@@ -19,14 +19,14 @@ export const compareCommand = new Command("compare")
     const stackA = engine.get(stackAId);
     if (!stackA) {
       console.error(chalk.red(`\u2716 Stack "${stackAId}" not found.`));
-      console.error(chalk.dim("  Run `stackpilot list` to see available stacks."));
+      console.error(chalk.dim("  Run `forgeboard list` to see available stacks."));
       process.exit(1);
     }
 
     const stackB = engine.get(stackBId);
     if (!stackB) {
       console.error(chalk.red(`\u2716 Stack "${stackBId}" not found.`));
-      console.error(chalk.dim("  Run `stackpilot list` to see available stacks."));
+      console.error(chalk.dim("  Run `forgeboard list` to see available stacks."));
       process.exit(1);
     }
 
@@ -105,7 +105,7 @@ export const compareCommand = new Command("compare")
     lines.push("");
 
     const title = `A: ${stackA.name}  vs  B: ${stackB.name}`;
-    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ Stack Comparison")}\n`);
+    console.log(`\n  ${gradientHeader("Forgeboard")} ${chalk.dim("/ Stack Comparison")}\n`);
     console.log(box(lines.join("\n"), title));
     console.log("");
   });

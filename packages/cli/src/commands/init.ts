@@ -1,10 +1,10 @@
 /**
- * stackpilot init — Initialize StackPilot in the current directory or interactively create a new stack.
+ * forgeboard init — Initialize Forgeboard in the current directory or interactively create a new stack.
  */
 
 import { checkbox, confirm, input, select } from "@inquirer/prompts";
-import type { StackProfile, StackTechnology } from "@stackpilot/core";
-import { getAllTemplates } from "@stackpilot/templates";
+import type { StackProfile, StackTechnology } from "@forgeboard/core";
+import { getAllTemplates } from "@forgeboard/templates";
 import chalk from "chalk";
 import { Command } from "commander";
 import { getRulesEngine, getStackEngine } from "../ui/context.js";
@@ -22,7 +22,7 @@ export const initCommand = new Command("init")
   .option("--template <id>", "Start from a template")
   .option("--json", "Output result as JSON")
   .action(async (opts) => {
-    console.log(`\n  ${gradientHeader("StackPilot")} ${chalk.dim("/ New Stack Wizard")}\n`);
+    console.log(`\n  ${gradientHeader("Forgeboard")} ${chalk.dim("/ New Stack Wizard")}\n`);
 
     const rules = getRulesEngine();
     const engine = getStackEngine();
@@ -212,9 +212,9 @@ export const initCommand = new Command("init")
       console.log(formatStackSummary(stack));
       console.log(
         nextSteps([
-          `stackpilot scaffold ${stack.id} --path .`,
-          `stackpilot generate --name ${stackName} --path . --techs ${technologies.map((t) => t.technologyId).join(",")}`,
-          `stackpilot info ${stack.id}`,
+          `forgeboard scaffold ${stack.id} --path .`,
+          `forgeboard generate --name ${stackName} --path . --techs ${technologies.map((t) => t.technologyId).join(",")}`,
+          `forgeboard info ${stack.id}`,
         ]),
       );
     }

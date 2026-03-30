@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to StackPilot will be documented in this file.
+All notable changes to Forgeboard will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,31 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-03-30
 
 ### Added — Phase 1: Analysis & Intelligence
-- Compatibility scoring engine: `stackpilot score <techA> [techB]` returns a 0-100 compatibility score between technologies
-- Stack detection: `stackpilot analyze [path]` detects the technology stack of an existing project by inspecting package.json, requirements.txt, go.mod, Cargo.toml, docker-compose.yml, etc.
-- Performance profiling: `stackpilot benchmark <id>` generates a performance profile for a stack (cold start, memory, build time estimates)
-- Cost estimation: `stackpilot cost <id>` estimates monthly hosting costs across providers (VPS, AWS, GCP)
+- Compatibility scoring engine: `forgeboard score <techA> [techB]` returns a 0-100 compatibility score between technologies
+- Stack detection: `forgeboard analyze [path]` detects the technology stack of an existing project by inspecting package.json, requirements.txt, go.mod, Cargo.toml, docker-compose.yml, etc.
+- Performance profiling: `forgeboard benchmark <id>` generates a performance profile for a stack (cold start, memory, build time estimates)
+- Cost estimation: `forgeboard cost <id>` estimates monthly hosting costs across providers (VPS, AWS, GCP)
 
 ### Added — Phase 2: Environment & Health
-- Environment sync: `stackpilot env sync` synchronizes .env.example with .env, `stackpilot env check` detects dangerous values (hardcoded secrets, default passwords)
-- Project health check: `stackpilot health [path]` audits a project for common issues (exposed secrets, missing .gitignore entries, TypeScript strict mode disabled, outdated dependencies)
+- Environment sync: `forgeboard env sync` synchronizes .env.example with .env, `forgeboard env check` detects dangerous values (hardcoded secrets, default passwords)
+- Project health check: `forgeboard health [path]` audits a project for common issues (exposed secrets, missing .gitignore entries, TypeScript strict mode disabled, outdated dependencies)
 
 ### Added — Phase 3: Scaffolding & Infrastructure
-- Compose preview: `stackpilot preview <id>` renders docker-compose.yml to stdout without writing files
-- Infrastructure as Code: `stackpilot deploy <id> --target <vps|aws|gcp>` generates deployment configurations (Dockerfile + nginx for VPS, CloudFormation for AWS, Terraform for GCP)
+- Compose preview: `forgeboard preview <id>` renders docker-compose.yml to stdout without writing files
+- Infrastructure as Code: `forgeboard deploy <id> --target <vps|aws|gcp>` generates deployment configurations (Dockerfile + nginx for VPS, CloudFormation for AWS, Terraform for GCP)
 
 ### Added — Phase 4: Migration & Learning
-- Migration planner: `stackpilot migrate --from <tech> --to <tech>` generates a step-by-step migration plan with code examples
-- Learning resources: `stackpilot learn <technology>` curates official docs, tutorials, and recommended courses for a technology
+- Migration planner: `forgeboard migrate --from <tech> --to <tech>` generates a step-by-step migration plan with code examples
+- Learning resources: `forgeboard learn <technology>` curates official docs, tutorials, and recommended courses for a technology
 
 ### Added — Phase 5: Collaboration & Sharing
-- Stack sharing: `stackpilot share <id>` serializes a stack into a base64-encoded URL that can be shared without any cloud service
-- Stack import from URL: `stackpilot import-url <url>` reconstructs a stack from a shared URL
-- Stack comparison: `stackpilot compare <a> <b>` shows a side-by-side diff of two stacks (technologies added, removed, changed)
-- Team standards: `stackpilot lint` validates the current stack against rules defined in `.stackpilotrc` (required technologies, banned technologies, version constraints)
+- Stack sharing: `forgeboard share <id>` serializes a stack into a base64-encoded URL that can be shared without any cloud service
+- Stack import from URL: `forgeboard import-url <url>` reconstructs a stack from a shared URL
+- Stack comparison: `forgeboard compare <a> <b>` shows a side-by-side diff of two stacks (technologies added, removed, changed)
+- Team standards: `forgeboard lint` validates the current stack against rules defined in `.forgeboardrc` (required technologies, banned technologies, version constraints)
 
 ### Added — Phase 6: Extensibility
-- Plugin system: `stackpilot plugin list|install|remove|info` manages community plugins that extend StackPilot with custom commands, templates, and technology definitions
+- Plugin system: `forgeboard plugin list|install|remove|info` manages community plugins that extend Forgeboard with custom commands, templates, and technology definitions
 
 ### Added — Core Engine Modules (14 new)
 - `engine/compatibility.ts` — scoreCompatibility(), scoreStack()

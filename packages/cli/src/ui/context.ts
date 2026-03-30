@@ -3,9 +3,9 @@
  * All initialization is lazy with proper error handling.
  */
 
-import type { Technology } from "@stackpilot/core";
-import { RulesEngine, RuntimeManager, ScaffoldOrchestrator, StackEngine } from "@stackpilot/core";
-import { loadAllTechnologies } from "@stackpilot/registry";
+import type { Technology } from "@forgeboard/core";
+import { RulesEngine, RuntimeManager, ScaffoldOrchestrator, StackEngine } from "@forgeboard/core";
+import { loadAllTechnologies } from "@forgeboard/registry";
 import chalk from "chalk";
 
 let _techs: Technology[] | null = null;
@@ -23,7 +23,7 @@ function getTechs(): Technology[] {
       if (err instanceof Error) {
         console.error(chalk.dim(`  ${err.message}`));
       }
-      console.error(chalk.dim("  Make sure @stackpilot/registry is built: pnpm build"));
+      console.error(chalk.dim("  Make sure @forgeboard/registry is built: pnpm build"));
       process.exit(1);
     }
   }
@@ -55,7 +55,7 @@ export function getStackEngine(): StackEngine {
       if (String(err).includes("SQLITE") || String(err).includes("database")) {
         console.error(chalk.dim("  The local database could not be created or opened."));
         console.error(
-          chalk.dim("  Check write permissions in your home directory (~/.stackpilot/)."),
+          chalk.dim("  Check write permissions in your home directory (~/.forgeboard/)."),
         );
       }
       process.exit(1);

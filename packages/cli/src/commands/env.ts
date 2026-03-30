@@ -1,10 +1,10 @@
 /**
- * stackpilot env [sync|check] — Environment variable sync and safety checks.
+ * forgeboard env [sync|check] — Environment variable sync and safety checks.
  */
 
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { checkDangerous, parseEnvFile, syncEnv } from "@stackpilot/core";
+import { checkDangerous, parseEnvFile, syncEnv } from "@forgeboard/core";
 import chalk from "chalk";
 import { Command } from "commander";
 import { box, error, formatJson } from "../ui/format.js";

@@ -1,13 +1,13 @@
 /**
- * stackpilot create <stack-id> --path <dir> — Scaffold a stack to disk.
+ * forgeboard create <stack-id> --path <dir> — Scaffold a stack to disk.
  * Uses official CLI tools when available and fills gaps.
  */
 
 import { execSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import type { Template } from "@stackpilot/core";
-import { getAllTemplates, getTemplate } from "@stackpilot/templates";
+import type { Template } from "@forgeboard/core";
+import { getAllTemplates, getTemplate } from "@forgeboard/templates";
 import chalk from "chalk";
 import { Command } from "commander";
 import ora from "ora";

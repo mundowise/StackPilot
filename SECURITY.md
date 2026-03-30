@@ -8,7 +8,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in StackPilot, please report it responsibly.
+If you discover a security vulnerability in Forgeboard, please report it responsibly.
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
@@ -23,21 +23,21 @@ We will acknowledge your report within 48 hours and provide a timeline for a fix
 
 ## Security Considerations
 
-StackPilot is a local-first development tool. It:
+Forgeboard is a local-first development tool. It:
 
 - Stores all data in a local SQLite database
 - Does not transmit stack data to any external service
 - Does not collect telemetry or usage analytics
 - Does not require authentication for local use
-- Only makes external API calls when explicitly using `stackpilot ai` commands (requires user-provided API key)
+- Only makes external API calls when explicitly using `forgeboard ai` commands (requires user-provided API key)
 
 ### API Key Security
 
-If you use the AI features (`stackpilot ai`), your Anthropic API key is:
-- Stored in the `ANTHROPIC_API_KEY` environment variable (never persisted to disk by StackPilot)
+If you use the AI features (`forgeboard ai`), your Anthropic API key is:
+- Stored in the `ANTHROPIC_API_KEY` environment variable (never persisted to disk by Forgeboard)
 - Sent only to the Anthropic API endpoint
 - Never logged, cached, or transmitted elsewhere
 
 ### Docker Security
 
-When using runtime features (`stackpilot up`), StackPilot generates Docker Compose files. Review the generated `docker-compose.yml` before running in production environments. Default configurations use development-appropriate settings (e.g., simple passwords) that should be hardened for production use.
+When using runtime features (`forgeboard up`), Forgeboard generates Docker Compose files. Review the generated `docker-compose.yml` before running in production environments. Default configurations use development-appropriate settings (e.g., simple passwords) that should be hardened for production use.
