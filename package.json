@@ -1,6 +1,6 @@
 {
   "name": "stackweld",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "private": true,
   "description": "The operating system for your dev stacks — define, validate, scaffold, launch, version, and reproduce full development environments from CLI or desktop.",
   "author": "Orlando Fernandez <hello@xplustechnologies.com>",

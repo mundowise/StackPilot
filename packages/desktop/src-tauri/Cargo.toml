@@ -1,6 +1,6 @@
 [package]
 name = "stackweld-desktop"
-version = "0.1.0"
+version = "0.2.4"
 description = "Stackweld Desktop App"
 authors = ["Orlando Fernandez"]
 edition = "2021"

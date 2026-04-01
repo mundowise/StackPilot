@@ -1,6 +1,6 @@
 {
   "name": "@stackweld/desktop",
-  "version": "0.2.0",
+  "version": "0.2.4",
   "description": "Desktop application for Stackweld — Tauri 2 native app with visual stack builder.",
   "license": "MIT",
   "author": "Orlando Fernandez <hello@xplustechnologies.com>",
