@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/mundowise/Stackweld/actions/workflows/ci.yml/badge.svg)](https://github.com/mundowise/Stackweld/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/mundowise/Stackweld/releases)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/mundowise/Stackweld/releases)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![Tauri](https://img.shields.io/badge/Tauri-2.0-orange.svg)](https://tauri.app/)
 
@@ -36,13 +36,14 @@ Stackweld eliminates the hours spent setting up new projects. Select your techno
 
 ## Quick Start
 
-### Option 1: Install via npm
-
 ```bash
 npm install -g @stackweld/cli
+stackweld
 ```
 
-### Option 2: Clone and run locally
+That's it. The interactive menu guides you through everything.
+
+For contributors or local development:
 
 ```bash
 git clone https://github.com/mundowise/Stackweld.git
@@ -98,17 +99,20 @@ stackweld generate --name my-app --techs nextjs,prisma,postgresql --profile stan
 ### CLI (recommended)
 
 ```bash
-# Clone the repository
+npm install -g @stackweld/cli
+```
+
+Requires Node.js >= 22.0.0.
+
+### From source
+
+```bash
 git clone https://github.com/mundowise/Stackweld.git
 cd Stackweld
-
-# Install dependencies
 pnpm install
-
-# Build all packages
 pnpm build
 
-# Use the CLI directly
+# Use directly
 node packages/cli/dist/index.js --help
 
 # Or link globally
@@ -315,7 +319,7 @@ Monorepo managed with Turborepo + pnpm. TypeScript strict mode. Biome for lintin
 ```bash
 pnpm install          # Install dependencies
 pnpm build            # Build all packages
-pnpm test             # Run tests (62+ passing)
+pnpm test             # Run tests
 pnpm lint             # Lint with Biome
 pnpm typecheck        # TypeScript checking
 ```

@@ -1,6 +1,6 @@
 {
   "name": "@stackweld/registry",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Technology registry for Stackweld — 83 YAML technology definitions with JSON Schema validation.",
   "license": "MIT",
   "author": "Orlando Fernandez <hello@xplustechnologies.com>",
@@ -25,8 +25,14 @@
     "lint": "biome check src/",
     "clean": "rm -rf dist .turbo"
   },
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
-    "@stackweld/core": "0.2.1",
+    "@stackweld/core": "workspace:*",
     "ajv": "^8.17.0",
     "yaml": "^2.7.0"
   },

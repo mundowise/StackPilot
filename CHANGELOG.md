@@ -5,6 +5,23 @@ All notable changes to Stackweld will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-03-31
+
+### Added
+- Interactive project generation: `stackweld init` now walks through a full step-by-step wizard for stack name, profile, technologies, output path, and git initialization
+- ASCII art banner on CLI startup
+- Updated shell completions covering all 38 commands (`stackweld completion bash|zsh|fish`)
+
+### Changed
+- Version sync: all packages (`@stackweld/core`, `@stackweld/registry`, `@stackweld/templates`, `@stackweld/cli`) bumped to 0.3.0
+- npm package protection via `.npmignore` (excludes `src/`, test files, config files, and workspace artifacts from published package)
+
+### Fixed
+- Security: removed internal paths from error messages exposed to CLI output
+- Shell completion entries updated to match the current 38-command surface
+
+---
+
 ## [0.2.0] - 2026-03-30
 
 ### Added — Phase 1: Analysis & Intelligence
