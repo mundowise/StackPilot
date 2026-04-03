@@ -1,8 +1,3 @@
-/**
- * Stack Engine — CRUD operations for stack definitions.
- * Handles creation, validation, versioning, and persistence.
- */
-
 import { randomUUID } from "node:crypto";
 import { getDatabase } from "../db/database.js";
 import type {
@@ -21,10 +16,6 @@ export class StackEngine {
     this.rules = rules;
   }
 
-  /**
-   * Create a new stack definition.
-   * Validates technologies and auto-resolves dependencies.
-   */
   create(opts: {
     name: string;
     description?: string;
@@ -34,7 +25,6 @@ export class StackEngine {
   }): { stack: StackDefinition; validation: ValidationResult } {
     const validation = this.rules.validate(opts.technologies);
 
-    // Add auto-resolved dependencies
     const allTechs = [...opts.technologies];
     for (const depId of validation.resolvedDependencies) {
       const tech = this.rules.getTechnology(depId);
@@ -47,7 +37,6 @@ export class StackEngine {
       }
     }
 
-    // Apply port assignments to existing techs
     for (const t of allTechs) {
       if (validation.portAssignments[t.technologyId]) {
         t.port = validation.portAssignments[t.technologyId];
@@ -74,9 +63,6 @@ export class StackEngine {
     return { stack, validation };
   }
 
-  /**
-   * Get a stack by ID.
-   */
   get(id: string): StackDefinition | null {
     const db = getDatabase();
     const row = db.prepare("SELECT * FROM stacks WHERE id = ?").get(id) as
@@ -106,9 +92,6 @@ export class StackEngine {
     };
   }
 
-  /**
-   * List all stacks.
-   */
   list(): StackDefinition[] {
     const db = getDatabase();
     const rows = db.prepare("SELECT id FROM stacks ORDER BY updated_at DESC").all() as {
@@ -117,18 +100,12 @@ export class StackEngine {
     return rows.map((r) => this.get(r.id)!).filter(Boolean);
   }
 
-  /**
-   * Delete a stack.
-   */
   delete(id: string): boolean {
     const db = getDatabase();
     const result = db.prepare("DELETE FROM stacks WHERE id = ?").run(id);
     return result.changes > 0;
   }
 
-  /**
-   * Update a stack. Auto-increments version and saves snapshot.
-   */
   update(
     id: string,
     changes: Partial<
@@ -163,7 +140,6 @@ export class StackEngine {
       id,
     );
 
-    // Replace technologies
     db.prepare("DELETE FROM stack_technologies WHERE stack_id = ?").run(id);
     for (const t of techs) {
       db.prepare(`
@@ -172,7 +148,6 @@ export class StackEngine {
       `).run(id, t.technologyId, t.version, t.port || null, JSON.stringify(t.config || {}));
     }
 
-    // Save version snapshot
     const updatedStack = this.get(id)!;
     this.saveVersionSnapshot(updatedStack, `Updated to v${newVersion}`);
 

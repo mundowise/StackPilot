@@ -1,7 +1,4 @@
-/**
- * Compose Generator — Pure function that generates docker-compose.yml content.
- * No disk I/O — returns structured data for preview or writing.
- */
+// No disk I/O — returns structured data, caller decides what to write.
 
 export interface ComposePreviewResult {
   yaml: string;
@@ -34,10 +31,6 @@ const DATA_MOUNTS: Record<string, string> = {
   redis: "/data",
 };
 
-/**
- * Generate a docker-compose.yml preview from a list of technologies.
- * Only includes technologies that have a `dockerImage`.
- */
 export function generateComposePreview(
   technologies: ComposeTechnology[],
   projectName: string,
@@ -59,14 +52,12 @@ export function generateComposePreview(
     lines.push(`    image: ${tech.dockerImage}`);
     lines.push("    restart: unless-stopped");
 
-    // Ports
     if (port) {
       lines.push("    ports:");
       lines.push(`      - "${port}:${port}"`);
       ports[tech.id] = port;
     }
 
-    // Environment variables
     const envVars = tech.envVars ? Object.entries(tech.envVars) : [];
     if (envVars.length > 0) {
       lines.push("    environment:");
@@ -75,7 +66,6 @@ export function generateComposePreview(
       }
     }
 
-    // Health check
     if (tech.healthCheck) {
       lines.push("    healthcheck:");
       if (tech.healthCheck.command) {
@@ -94,7 +84,6 @@ export function generateComposePreview(
       }
     }
 
-    // Volumes for databases
     const mountPath = DATA_MOUNTS[tech.id];
     if (mountPath && tech.category === "database") {
       const volName = `${tech.id}_data`;
@@ -103,14 +92,12 @@ export function generateComposePreview(
       volumes.push(volName);
     }
 
-    // Network
     lines.push("    networks:");
     lines.push(`      - ${networkName}`);
 
     lines.push("");
   }
 
-  // Named volumes
   if (volumes.length > 0) {
     lines.push("volumes:");
     for (const vol of volumes) {
@@ -119,7 +106,6 @@ export function generateComposePreview(
     lines.push("");
   }
 
-  // Network
   lines.push("networks:");
   lines.push(`  ${networkName}:`);
   lines.push("    driver: bridge");

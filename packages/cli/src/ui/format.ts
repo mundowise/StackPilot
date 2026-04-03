@@ -1,6 +1,5 @@
 /**
  * Shared formatting utilities for CLI output.
- * Premium visual design for Stackweld CLI.
  */
 
 import type { StackDefinition, Technology, Template, ValidationResult } from "@stackweld/core";

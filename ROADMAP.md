@@ -31,7 +31,7 @@
 - Updated shell completions for all 38 commands
 - npm package protection via `.npmignore`
 
-## v0.3.1 — Security Hardening (Current Release, 2026-04-02)
+## v0.3.1 — Security Hardening (Released 2026-04-02)
 
 - All shell commands migrated to `execFileSync` (prevents command injection)
 - Scaffold command allowlist validation
@@ -42,7 +42,13 @@
 - Content-Security-Policy on landing page
 - Documentation accuracy pass
 
-## v0.4.0 — Planned
+## v0.4.0 — Code Quality & Stability (Current Release, 2026-04-02)
+
+- Code quality pass across all source files
+- All version references synchronized across packages
+- Documentation accuracy improvements
+
+## v0.5.0 — Planned
 
 - End-to-end tests for CLI command handlers
 - Desktop app test suite (Zustand store, Tauri bridge, React pages)
@@ -51,9 +57,9 @@
 - `--dry-run` support across all scaffold commands
 - Project profiles: rapid, standard, production, enterprise, lightweight
 
-## v0.5.0 — Future
+## v0.6.0 — Future
 
 - AI utilities: `stackweld ai suggest`, `ai readme`, `ai explain`
 - Custom user templates (`stackweld template save/use`)
 - Expanded registry: 100+ deeply modeled technologies
-- Evaluate demand for web dashboard, cloud sync, marketplace
+- Web dashboard and cloud sync exploration

@@ -1,6 +1,6 @@
 # Stackweld — Core API Reference
 
-> Package: `@stackweld/core` | Version: 0.3.1 | Last updated: 2026-04-02
+> Package: `@stackweld/core` | Version: 0.4.0 | Last updated: 2026-04-02
 
 This document covers the public API of the `@stackweld/core` package. The CLI and Desktop app both consume this package — understanding this API is useful if you want to embed Stackweld in a custom tool or write integration tests.
 

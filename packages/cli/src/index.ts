@@ -44,7 +44,7 @@ import { templateCommand } from "./commands/template.js";
 import { upCommand } from "./commands/up.js";
 import { versionCommand } from "./commands/version-cmd.js";
 
-const VERSION = "0.3.1";
+const VERSION = "0.4.0";
 
 const program = new Command();
 

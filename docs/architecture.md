@@ -1,6 +1,6 @@
 # Stackweld — Architecture Documentation
 
-> Version: 0.3.1 | Last updated: 2026-04-02 | Covers: Core, Registry, Templates, CLI, Desktop
+> Version: 0.4.0 | Last updated: 2026-04-02 | Covers: Core, Registry, Templates, CLI, Desktop
 
 ---
 
