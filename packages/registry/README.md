@@ -1,6 +1,6 @@
 # @stackweld/registry
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/mundowise/Stackweld/releases)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](https://github.com/mundowise/Stackweld/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 The technology registry for Stackweld. Contains 83 YAML technology definitions with JSON Schema validation, covering compatibility rules, dependencies, ports, and scaffold instructions.

@@ -1,6 +1,6 @@
 # @stackweld/templates
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/mundowise/Stackweld/releases)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](https://github.com/mundowise/Stackweld/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Built-in stack templates for Stackweld. 20 curated, ready-to-use project templates that you can scaffold with a single command.

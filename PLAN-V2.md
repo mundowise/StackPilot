@@ -1,5 +1,7 @@
 # Stackweld v0.2 — Feature Implementation Plan
 
+> **STATUS: COMPLETED** — All 15 features shipped in v0.2.0 (2026-03-30). This document is preserved as historical reference. For the current roadmap, see [ROADMAP.md](./ROADMAP.md).
+
 ## 15 Features — 5 Phases
 
 ---

@@ -1,6 +1,6 @@
 # @stackweld/core
 
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/mundowise/Stackweld/releases)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](https://github.com/mundowise/Stackweld/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 The core engine for Stackweld. Handles stack persistence, compatibility rules, scaffolding orchestration, Docker lifecycle, and all analysis modules.
