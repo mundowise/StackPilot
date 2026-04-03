@@ -12,13 +12,13 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642195f572a2b2b8a0a4783 # v4.4.0
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: pnpm
@@ -68,22 +68,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@v4
 
       - name: Install pnpm
-        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        uses: pnpm/action-setup@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@49933ea5288caeca8642195f572a2b2b8a0a4783 # v4.4.0
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: pnpm
 
       - name: Install Rust stable
-        uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e18c1f174b91a07 # stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Rust cache
-        uses: swatinem/rust-cache@9d47c6ad4b02e050fd481d890b2ea34778fd09d6 # v2.7.8
+        uses: swatinem/rust-cache@v2
         with:
           workspaces: packages/desktop/src-tauri -> target
 
@@ -100,7 +100,7 @@ jobs:
         run: pnpm build
 
       - name: Build Tauri app
-        uses: tauri-apps/tauri-action@263291976d6e2faca404a945090ff24eab48b04e # v0.5.20
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
